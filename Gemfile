@@ -1,7 +1,12 @@
 source 'https://rubygems.org'
 gem 'jekyll'
-gem 'jekyll-admin', group: :jekyll_plugins
-gem 'jekyll-archives'
-gem 'jekyll-sitemap'
-gem 'jekyll-paginate'
-gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'liquid-c'
+
+group:jekyll_plugins do
+    gem 'jekyll-archives'
+    gem 'jekyll-sitemap'
+    gem 'jekyll-paginate'
+    gem 'jekyll-include-cache'
+end
+
+gem 'wdm', '~> 0.1.0'

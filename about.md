@@ -4,11 +4,8 @@ title: About
 permalink: /about/
 ---
 
+<img src="{{ site.about | prepend: site.baseurl }}" title="{{ site.title }}" class="profile">
 
+## Yangwook Jeong
 
-* 이름: 이원석
-* 출생: 1996-05-20
-
-[centrarium]: https://github.com/bencentra/centrarium
-[bencentra]: http://bencentra.com
-[jekyll]: https://github.com/jekyll/jekyll
+꾸준히 배우는 것과 기록하는 것을 즐깁니다. 컨테이너, 클라우드 환경, 데이터 파이프라인에 관심이 많습니다.
