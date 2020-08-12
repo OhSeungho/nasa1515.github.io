@@ -23,7 +23,7 @@ description: >
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://nasa1515.github.io" # the base hostname & protocol for your site
 cover: "/assets/PINGMAIN.jpg"
-logo: "/assets/PINGGU.png"
+logo: "/assets/PINGGU.jpg"
 timezone: Asia/Seoul
 
 # Build settings
