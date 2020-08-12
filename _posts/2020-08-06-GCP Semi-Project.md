@@ -1,21 +1,9 @@
 ---
-title:  "[GCP] Semi-Project"
-excerpt: "[GCP]를 사용한 LB 웹사이트"
-
-toc_label: "페이지 주요 목차"
-toc: true
-toc_sticky: true
-
-categories:
-
-  - GCP
-  
-tags:
-
-  - GCP
- 
-last_modified_at: 2020-07-28T09:00:00-05:00
-
+layout: post
+title: "[GCP] - Toy Project"
+author: Lee Wonseok
+categories: GCP
+comments: true
 ---
 
 

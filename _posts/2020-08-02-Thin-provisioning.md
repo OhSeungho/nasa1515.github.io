@@ -1,23 +1,16 @@
 ---
-title:  "LVM (Thin provisioning)"
-excerpt: "Thin provisioning"
-
-categories:
-
-  - LINUX
-  
-tags:
-
-  - LINUX
- 
-last_modified_at: 2020-06-29T09:00:00-05:00
-
+layout: post
+title: "LINUX - This-Provisioning"
+author: Lee Wonseok
+categories: LINUX
+comments: true
 ---
+
 
 # Thin provisioning.
 
 
-**PART 2 - Thin provisioning**  
+**PART 5 - Thin provisioning**  
 
 ----
 
