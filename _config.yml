@@ -1,27 +1,27 @@
 # External gems
 # See http://ixti.net/software/2013/01/28/using-jekyll-plugins-on-github-pages.html for making `jekyll archives` work.
-gems:
-  # - jekyll-archives # Sorry, not GitHub pages friendly!
+plugins:
+  - jekyll-archives
   - jekyll-sitemap
   - jekyll-paginate
+  - jekyll-include-cache
 
 exclude:
   - "/vendor/"
+  - .jekyll-cache
 
 # encoding: utf-8
 
 # Site settings
-title: 나사의 기술블로그
+title: NASA1515
 subtitle: "시스템엔지니어 나사의 블로그"
 email: h43254@gmail.com
 name: WONSEOK LEE
 description: >
   nasa's SE blog
-# Base URL of site (i.e. /blog). It should always start with a slash,
-# and never end with a slash. Set it to a blank value if hosting at the
-# root of your server.
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://nasa1515.github.io" # the base hostname & protocol for your site
+
+baseurl: ""
+url: "http://nasa1515.github.io" 
 cover: "/assets/PINGMAIN.jpg"
 logo: "/assets/PINGGU.jpg"
 timezone: Asia/Seoul
@@ -30,20 +30,20 @@ timezone: Asia/Seoul
 markdown: kramdown
 paginate: 5
 paginate_path: "/page:num/"
-inter_post_navigation: false
+inter_post_navigation: true
 highlightjs_theme: "monokai-sublime"
 
 
 # Archive settings (see https://github.com/jekyll/jekyll-archives/)
-# jekyll-archives:
-#   enabled:
-#     - categories
-#     # - tags
-#   layout: 'archive'
-#   permalinks:
-#     category: '/category/:name/'
-#     tag: '/tag/:name/'
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layout: "archive"
+  permalinks:
+    category: "/category/:name/"
 
+    
 # Disqus comments
 disqus_shortname: nasa1415
 
