@@ -22,8 +22,8 @@ description: >
 # root of your server.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://nasa1515.github.io" # the base hostname & protocol for your site
-cover: "/assets/header_basketball.jpg"
-logo: "/assets/logo-ball.png"
+cover: "/assets/PINGMAIN.jpg"
+logo: "/assets/PINGGU.png"
 timezone: Asia/Seoul
 
 # Build settings
