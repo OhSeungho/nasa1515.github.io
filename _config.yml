@@ -11,17 +11,17 @@ exclude:
 # encoding: utf-8
 
 # Site settings
-title: Hoik's blog
-subtitle: "단순히 농구를 좋아하는 사람의 나를 위한 블로그"
-email: ghdlr2659@gmail.com
-name: Hoik Jang
+title: NASA1515's blog
+subtitle: "평범한 SE의 기술 개발 블로그"
+email: h43254@gmail.com
+name: Lee WonSeok
 description: >
-  Hoik's developer blog
+  NASA1515's SystemEngineer blog
 # Base URL of site (i.e. /blog). It should always start with a slash,
 # and never end with a slash. Set it to a blank value if hosting at the
 # root of your server.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://hoik92.github.io" # the base hostname & protocol for your site
+url: "http://nasa1515.github.io" # the base hostname & protocol for your site
 cover: "/assets/header_basketball.jpg"
 logo: "/assets/logo-ball.png"
 timezone: Asia/Seoul
@@ -45,7 +45,7 @@ highlightjs_theme: "monokai-sublime"
 #     tag: '/tag/:name/'
 
 # Disqus comments
-disqus_shortname: hoik92
+disqus_shortname: nassa1415
 
 # Google analytics
 # ga_tracking_id: "UA-XXXX-1"
@@ -76,18 +76,10 @@ disqus_shortname: hoik92
 #     url: https://twitter.com/TheBenCentra # URL of your profile (leave blank to not display in footer)
 #     desc: Follow me on Twitter            # Description to display as link title, etc
 #     share: true                           # Include in the "Share" section of posts
-social:
-  - name: Facebook
-    icon: facebook
-    username: "장호익"
-    url: https://facebook.com/hoik.jang.1
-    desc: Friend me on Facebook
-    share: true
-
   - name: GitHub
     icon: github
-    username: hoik92
-    url: https://github.com/hoik92
+    username: nasa1515
+    url: https://github.com/nasa1515
     desc: Fork me on GitHub
     share: false
 
