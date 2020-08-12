@@ -11,17 +11,17 @@ exclude:
 # encoding: utf-8
 
 # Site settings
-title: Hoik's blog
-subtitle: "단순히 농구를 좋아하는 사람의 나를 위한 블로그"
-email: ghdlr2659@gmail.com
-name: Hoik Jang
+title: 나사의 기술블로그
+subtitle: "시스템엔지니어 나사의 블로그"
+email: h43254@gmail.com
+name: WONSEOK LEE
 description: >
   Hoik's developer blog
 # Base URL of site (i.e. /blog). It should always start with a slash,
 # and never end with a slash. Set it to a blank value if hosting at the
 # root of your server.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://hoik92.github.io" # the base hostname & protocol for your site
+url: "http://nasa1515.github.io" # the base hostname & protocol for your site
 cover: "/assets/header_basketball.jpg"
 logo: "/assets/logo-ball.png"
 timezone: Asia/Seoul
