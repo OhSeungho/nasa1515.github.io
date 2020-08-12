@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "LINUX - This-Provisioning"
+title: "[LINUX] - This-Provisioning"
 author: Lee Wonseok
 categories: LINUX
 comments: true
