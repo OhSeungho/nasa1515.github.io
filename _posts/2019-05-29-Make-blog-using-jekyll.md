@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "[Jekyll] Jekyll로 github 블로그 만들기"
-author: Hoik Jang
-categories: jekyll
+title: "test"
+author: Lee Wonseok
+categories: CCCR
 comments: true
 ---
 
