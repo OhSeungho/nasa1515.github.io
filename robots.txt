@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: http://hoik92.github.io/sitemap.xml
