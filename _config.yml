@@ -16,7 +16,7 @@ subtitle: "시스템엔지니어 나사의 블로그"
 email: h43254@gmail.com
 name: WONSEOK LEE
 description: >
-  Hoik's developer blog
+  nasa's SE blog
 # Base URL of site (i.e. /blog). It should always start with a slash,
 # and never end with a slash. Set it to a blank value if hosting at the
 # root of your server.
@@ -45,7 +45,7 @@ highlightjs_theme: "monokai-sublime"
 #     tag: '/tag/:name/'
 
 # Disqus comments
-disqus_shortname: hoik92
+disqus_shortname: nasa1415
 
 # Google analytics
 # ga_tracking_id: "UA-XXXX-1"
@@ -80,8 +80,8 @@ social:
 
   - name: GitHub
     icon: github
-    username: hoik92
-    url: https://github.com/hoik92
+    username: nasa1515
+    url: https://github.com/nasa1515
     desc: Fork me on GitHub
     share: false
 
