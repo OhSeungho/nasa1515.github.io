@@ -77,12 +77,6 @@ disqus_shortname: hoik92
 #     desc: Follow me on Twitter            # Description to display as link title, etc
 #     share: true                           # Include in the "Share" section of posts
 social:
-  - name: Facebook
-    icon: facebook
-    username: "장호익"
-    url: https://facebook.com/hoik.jang.1
-    desc: Friend me on Facebook
-    share: true
 
   - name: GitHub
     icon: github
