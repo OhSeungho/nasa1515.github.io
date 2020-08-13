@@ -7,31 +7,47 @@ comments: true
 ---
 
 
-# Thin provisioning.
+# LINUX - Thin provisioning.
 
+
+
+**머리말**  
+Thin provisioning은 경험해본 적이 한번도 없는 기술이다.  
+어디서 쓸까? 생각해보면 메일이나, 클라우드를 제공하는 회사들에서  
+많이 쓸 것 같은 기능같다.
+
+---
+**목차**
+
+- [Thin provisioning이란?](#a1)
+- [구성방법](#a2)
+
+---
 
 **PART 5 - Thin provisioning**  
 
-----
+
 
 
   * **교육 관련 참고 사이트**
-  1. 프로토콜 용어 및 기능 검색 : http://ktword.co.kr/word/
-	2. 이론적 내용 확인 : https://blozk.com/47 
+
+1. 프로토콜 용어 및 기능 검색 : http://ktword.co.kr/word/  
+2. 이론적 내용 확인 : https://blozk.com/47 
 
 
 ----
 	
- **Thin provisioning**  
-	 Thin provisioning 이란 쉽게 얘기하면 사용한 만큼만의 용량을 할당하는 방식이다.  
-	 10G를 할당 받았지만 3G의 공간만을 사용한다면 실제 사용분만큼의 용량을 제공한다.  
-	 용량을 더 사용한다면 용량을 확보해주고 줄일 경우 사용했던 공간을 회수해 간다.  
-	 이런식으로 잉여 자원을 최대한 억제 할 수 있다.  
+## 1. Thin provisioning이란?   <a name="a1"></a> 
+
+Thin provisioning 이란 쉽게 얘기하면 사용한 만큼만의 용량을 할당하는 방식이다.  
+10G를 할당 받았지만 3G의 공간만을 사용한다면 실제 사용분만큼의 용량을 제공한다.  
+용량을 더 사용한다면 용량을 확보해주고 줄일 경우 사용했던 공간을 회수해 간다.  
+이런식으로 잉여 자원을 최대한 억제 할 수 있다.  
 
 
-**그림을 보면 이해가 쉬울 것이다!!**
-
-![Storage - Thick & Thin Provisioning : 네이버 블로그](https://lh3.googleusercontent.com/proxy/hYLgfaDcwO_O-5BPy_IJatfsZ28JFANoHfpXU-JrAsV5yjTGDB2SplWHmGd6cDtys1yB2j6pWwsrlLn8jw6Hpzz0tqXm1x_O84cpq61sgaqei-0tcaGwZuVt_Z8C1HFDZrMWY62Kw30Y9fp1z9FwpswXTQBv2JzNlcLPQ5RqLJGMxfB__CLjHmDwp5ioXaJD38UDSFaHtMveVg)
+**그림을 보면 이해가 쉬울 것이다!!**  
+(![스크린샷, 2020-08-13 18-30-30](https://user-images.githubusercontent.com/69498804/90118378-1cb86900-dd93-11ea-93f4-09740a93bd5e.png)
+)
 <br/>
 
 * **Thin provisioning 의 장점**
@@ -45,10 +61,12 @@ comments: true
   
   
 <br/>  
-  
-* **구성방법**  
-	구성의 경우 OS 설치시 GUI를 사용하면 더욱 쉽게 구축이 가능하나  
-	이번 포스트에서는 명령어로만 구성.  
+
+---
+
+## 2. 구성방법   <a name="a2"></a>  
+구성의 경우 OS 설치시 GUI를 사용하면 매우 쉽게 구축이 가능하나  
+이번 포스트에서는 명령어를 이용해서 구성해보았다.  
 
 * **구축 순서**  
 
@@ -58,7 +76,7 @@ comments: true
 
 
 
-	**%%이전 LVM 포스트로 PV, VG 구성 방법은 설명하였기에 이번 포스트는 씬풀부터 설명%%**  
+	**[이전 LVM 포스트로 PV, VG 구성 방법은 설명하였기에 이번 포스트는 씬풀부터 설명]**  
 
 	**미리 설정해놓은 wonseok VG로 진행**
 	
