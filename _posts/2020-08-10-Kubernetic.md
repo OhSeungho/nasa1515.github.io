@@ -12,9 +12,9 @@ tags: [Kubernetes]
 
 
 **목차**
-- [JOB이란](#job?)
-- [[TEST 하는중](#test)
-- [[TEST 하는중2](##-[dox]-NETWORK)
+- [JOB이란](#-job?)
+- [TEST 하는중](#-test)
+- [TEST 하는중2](##-[dox]-network)
 
 # JOB?
 
