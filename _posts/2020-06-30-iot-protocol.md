@@ -6,14 +6,8 @@ categories: IoT
 date: 2020-06-30 09:36
 comments: true
 tags: [iot, protocol]
-cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/iot-protocol.jpg
 ---
 
-원문: [Comparison of Wireless Technologies (Bluetooth, WiFi, BLE, Zigbee, Z-Wave, 6LoWPAN, NFC, WiFi Direct, GSM, LTE, LoRa, NB-IoT, and LTE-M)](https://predictabledesigns.com/wireless_technologies_bluetooth_wifi_zigbee_gsm_lte_lora_nb-iot_lte-m/)
-
-<br> 
-
----
 <br>
 
 ## 목차
