@@ -12,8 +12,8 @@ tags: [Kubernetes]
 
 
 **목차**
-- [JOB?](#JOB?)
-- [[DOX]-TEST](#[DOX]-TEST)
+- [JOB?](#job?)
+- [[DOX]-TEST](#[dox]-test)
 
 #  JOB?
 
