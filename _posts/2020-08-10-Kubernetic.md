@@ -13,7 +13,8 @@ tags: [Kubernetes]
 
 **목차**
 - [JOB이란](#job?)
-- [[DOX]-TEST](#[dox]-test)
+- [[TEST 하는중](#test)
+- [[TEST 하는중2](##-[dox]-NETWORK)
 
 # JOB?
 
@@ -25,4 +26,37 @@ tags: [Kubernetes]
 
 
 
- ## [DOX] TEST
+ ## TEST
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ## [dox] NETWORK
