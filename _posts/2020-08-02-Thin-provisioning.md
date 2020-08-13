@@ -46,8 +46,8 @@ Thin provisioning 이란 쉽게 얘기하면 사용한 만큼만의 용량을 �
 
 
 **그림을 보면 이해가 쉬울 것이다!!**  
-(![스크린샷, 2020-08-13 18-30-30](https://user-images.githubusercontent.com/69498804/90118378-1cb86900-dd93-11ea-93f4-09740a93bd5e.png)
-)
+![스크린샷, 2020-08-13 18-30-30](https://user-images.githubusercontent.com/69498804/90118378-1cb86900-dd93-11ea-93f4-09740a93bd5e.png)
+
 <br/>
 
 * **Thin provisioning 의 장점**
