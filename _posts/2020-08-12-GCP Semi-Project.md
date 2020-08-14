@@ -10,8 +10,27 @@ comments: true
 
 #  GCP (Google Cloud Platform) 토이 프로젝트
 
+**머리말**  
+ GCP를 공부하기 위해 모인 사람들로 구성해서 간단한 토이 프로젝트를 진행해보았다.  
+ 리눅스를 처음 공부하듯 GCP에서도 웹페이지를 띄우는 프로젝트를 우선 진행해보았다.  
+ 
+---
 
-**프로젝트 - GCP를 사용한 웹 사이트 구축 세미 프로젝트**  
+**목차**
+
+- [프로젝트 개요](#a1)
+- [서버 구축 순서](#a2)
+- [서버 구축](#a3)
+- [DB 구축](#a4)
+- [DNS 구성](#a5)
+- [오토스케일링 구축](#a6)
+- [로드밸런서 구축](#a7)
+- [서비스 동작 확인](#a8)
+
+
+---
+
+## 1. GCP를 사용한 웹 사이트 구축 토이 프로젝트   <a name="a1"></a>
 
 * 사용기술
     
@@ -28,10 +47,8 @@ comments: true
 * **개요**  
 
     오토스케일링은 클라우드 환경의 가장 기본적 요소들 중에 하나이다.  
-    트래픽 집중에 따라 서버, 스토리지 등의 자원이 자동으로 확장하면서  
-    안정적인 서비스를 유지 할 수 있다.  
-    서버의 개수가 늘어나는 것을 스케일 아웃 (scale out)  
-    줄어드는 것을 스케일 인 (scale in)이라고 한다.  
+    트래픽 집중에 따라 서버, 스토리지 등의 자원이 자동으로 확장하면서  안정적인 서비스를 유지 할 수 있다.  
+    서버의 개수가 늘어나는 것을 ``스케일 아웃 (scale out)``  줄어드는 것을 ``스케일 인 (scale in)``이라고 한다.  
     오토스케일링을 통해 트래픽에 따라 서버를 늘리고 줄이는 것을 자동화해  
     효율적으로 웹서버를 운영할 수 있는 프로젝트를 진행해보았습니다.  
 
@@ -41,11 +58,8 @@ comments: true
 * **Architecture**  
 
     오토스케일링이 가능한 웹서버를 구축하기 위해서 다음과 같이 구성했습니다.  
-    먼저, 외부의 요청을 받을 글로벌 로드 밸런서를 구축했고  
-    웹서버가 설치된 인스턴스 그룹이 필요합니다.  
-    실제로 서비스 할 VM 인스턴스는 인스턴스 그룹의 설정 정보  
-    (CPU 사용량 등 모니터링 메트릭)에 따라 인스턴스 템플릿을 통해  
-    자동으로 생성이 되거나 삭제가 됩니다.  
+    먼저, 외부의 요청을 받을 글로벌 로드 밸런서를 구축했고 웹서버가 설치된 인스턴스 그룹이 필요합니다.  
+    실제로 서비스 할 VM 인스턴스는 인스턴스 그룹의 설정 정보 (CPU 사용량 등 모니터링 메트릭)에 따라 인스턴스 템플릿을 통해 자동으로 생성이 되거나 삭제가 됩니다.  
 
     **프로젝트 서비스 아키텍처**
 
@@ -54,46 +68,46 @@ comments: true
     ![아키](https://user-images.githubusercontent.com/64260883/89745329-0ccc2b00-daee-11ea-9c38-212150528a9b.png)
 
 
-    Client : 웹서버에 접속하는 유저들  
-    DNS : 특정 LB의 주소로 DNS를 구축해 로드밸런싱 될 수 있도록 구성  
-    LB : 특정 웹서버의 CPU 사용량이 일정 수준을 넘어가면 오토스케일링 진행.  
-    VPN : 특정 호스트만 관리자 웹서버에 접속하기 위한 보안 설정
+    ``Client`` : 웹서버에 접속하는 유저들  
+    ``DNS`` : 특정 LB의 주소로 DNS를 구축해 로드밸런싱 될 수 있도록 구성  
+    ``LB`` : 특정 웹서버의 CPU 사용량이 일정 수준을 넘어가면 오토스케일링 진행.  
+    ``VPN`` : 특정 호스트만 관리자 웹서버에 접속하기 위한 보안 설정
 ---
 
 
-* **구성/실습**
+## 2. 서버 구축 순서 <a name="a2"></a>
 
-    1. 인스턴스 템플릿을 만들기 위해 VM 인스턴스를 생성합니다.
+  1. 인스턴스 템플릿을 만들기 위해 VM 인스턴스를 생성합니다.
     
-    2. 생성된 VM 인스턴스에 웹서버를 설치합니다.
+  2. 생성된 VM 인스턴스에 웹서버를 설치합니다.
     
-    3. 웹서버에 GCP SQL을 이용해 DB를 공유시킵니다.
+  3. 웹서버에 GCP SQL을 이용해 DB를 공유시킵니다.
 
-    4. Wordpress 설정을 진행합니다.
+  4. Wordpress 설정을 진행합니다.
+   
+  5. 웹서버가 설치된 인스턴스를 스냅샷으로 만듭니다.
     
-    3. 웹서버가 설치된 인스턴스를 스냅샷으로 만듭니다.
+  6. 생성된 스냅샷을 가지고 이미지를 만듭니다.
     
-    4. 생성된 스냅샷을 가지고 이미지를 만듭니다.
+  7. 이미지를 가지고 인스턴스 템플릿을 생성합니다.
     
-    5. 이미지를 가지고 인스턴스 템플릿을 생성합니다.
+  8. 인스턴스 템플릿으로 인스턴스 그룹을 생성합니다.
     
-    6. 인스턴스 템플릿으로 인스턴스 그룹을 생성합니다.
+  9. 로드 밸런서를 적용해 웹서버에 들어오는 트래픽을 부하분산 시킵니다.
     
-    7. 로드 밸런서를 적용해 웹서버에 들어오는 트래픽을 부하분산 시킵니다.
+  10. DNS 서버를 위한 인스턴스를 하나 생성합니다.
     
-    8. DNS 서버를 위한 인스턴스를 하나 생성합니다.
-    
-    9. DNS 를 위한 방화벽 설정 을 추가합니다.
+  11. DNS 를 위한 방화벽 설정 을 추가합니다.
 
 
 ----
 
-* **실습 내용**  
+## 3. 서버 구축 <a name="a3"></a> 
 
-    **1. VM Instance 생성**
+  **1. VM Instance 생성**
 
 
-    ![스크린샷, 2020-08-04 10-00-11](https://user-images.githubusercontent.com/64260883/89241265-5a9dea80-d639-11ea-8daf-15a819085531.png)
+  ![스크린샷, 2020-08-04 10-00-11](https://user-images.githubusercontent.com/64260883/89241265-5a9dea80-d639-11ea-8daf-15a819085531.png)
 
 
     GCP 콘솔에서 [Compute Engine]에서 [VM 인스턴스]를 선택 후  
@@ -103,34 +117,36 @@ comments: true
     VPC를 통해서 직접 DB를 연결 할 것이기 때문에 외부IP를 고정으로 예약합니다.  
     나머지 값들은 기본으로 둡니다.
     
-    ---
+  ---
     
-    **2. WEB SERVER 구성**  
-    [**LAMP 구성Permalink**]  
+  **2. WEB SERVER 구성**  
+  
+  [**LAMP 구성Permalink**]
+  * **Wordpress를 위한 Apache, MySQL(MariaDB), PHP를 설치합니다**
 
-    * **Wordpress를 위한 Apache, MySQL(MariaDB), PHP를 설치합니다**
 
-
-    * **Apache**  
+  * **Apache**  
 
     [**아래 명령으로 업데이트 및 httpd 설치, 설정을 진행합니다**]
 
     ![스크린샷, 2020-08-04 10-19-08](https://user-images.githubusercontent.com/64260883/89242215-f7618780-d63b-11ea-8c85-aa504d02ffff.png)
 
-      yum update -y
-      yum install -y httpd
-      systemctl start httpd
-      systemctl enable httpd
-      firewall-cmd --add-service=http --permanent
-      firewall-cmd --add-port=80/tcp --pernmanent
+    ```
+    yum update -y
+    yum install -y httpd
+    systemctl start httpd
+    systemctl enable httpd
+    firewall-cmd --add-service=http --permanent
+    firewall-cmd --add-port=80/tcp --pernmanent
+     ```
 
 ---
 
-* **DB**  
+## 4. DB 구축 <a name="a4"></a> 
 
-    [**VM 인스턴스에 MariaDB를 설치합니다**]
+  [**VM 인스턴스에 MariaDB를 설치합니다**]
 
-      yum install mariadb mariadb-server
+    yum install mariadb mariadb-server
 
 * **API 설정**
 
@@ -213,23 +229,24 @@ comments: true
 
 ----
 
-  * **DNS 구성**  
+## 5. DNS 구성 <a name="a5"></a>  
+
   실제 도메인을 구매하지 못해 내부 통신으로 DNS를 구축,  
   웹사이트에 매칭 시켜주도록 설정하였음.  
 
 
-    **[인스턴스 만들기]를 클릭해서 인스턴스를 생성합니다.**  
+  * **[인스턴스 만들기]를 클릭해서 인스턴스를 생성합니다.**  
   WEBServer와 동일하게 구성하였음.
 
     ![dbs](https://user-images.githubusercontent.com/64260883/89745943-ca0c5200-daf1-11ea-8ac0-29a9f9fb7826.png)
 
-    GCP 기반의 서버이다 보니 DNS 통신을 내부로 고정,     
+    GCP 기반의 서버이다 보니 ``DNS 네트워크를 내부로 고정``,     
   ![ip](https://user-images.githubusercontent.com/64260883/89746273-cb3e7e80-daf3-11ea-8bc8-5c5d7fb80f46.png)
 
 
   * **DNS SERVER 구축**
 
-  * 기본적인 DNS 파일 설치 및 환경구성을 위한 명령.
+  * **기본적인 DNS 파일 설치 및 환경구성을 위한 명령.**
 
 
         yum -y install bind
@@ -238,7 +255,7 @@ comments: true
         firewall-cmd --add-port=80/tcp --permanent 
         firewall-cmd --reload 
 
-  * 네트워크 환경 변경
+  * **네트워크 환경 변경**
 
         내부 IP로만 통신 할 예정이라 STATIC하게 설정 변경.
         nmcli connection modify eth0 ipv4.method manual 
@@ -247,22 +264,25 @@ comments: true
         nmcli connection modify eth0 ipv4.method manual 
         nmcli connection modify eth0 ipv4.dns 10.178.0.16
 
-  * 존파일 내용 확인  
-    [로드밸런서 아이피를 삽입]  
+  * **존파일 내용 확인**  
+    **[로드밸런서 아이피를 삽입]**  
+    
     ![aaaaaaaaa](https://user-images.githubusercontent.com/64260883/89758291-68b0a700-db22-11ea-99e6-6276c529d9c2.png)
 
 
-  * 정상적으로 내부 도메인 통신이 되는지 확인.    
-  ![ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ](https://user-images.githubusercontent.com/64260883/89758746-787cbb00-db23-11ea-964c-26cccecb2df4.png)
+  * **정상적으로 내부 도메인 통신이 되는지 확인.** 
+
+    ![ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ](https://user-images.githubusercontent.com/64260883/89758746-787cbb00-db23-11ea-964c-26cccecb2df4.png)
 
 
-  * GCP는 외부 연결이 가능하게 방화벽 설정.
-  ![스크린샷, 2020-08-10 16-16-02](https://user-images.githubusercontent.com/64260883/89759290-cba33d80-db24-11ea-9a3f-0b07e3b11269.png)
+  * **GCP는 외부 연결이 가능하게 방화벽 설정.**
+
+    ![스크린샷, 2020-08-10 16-16-02](https://user-images.githubusercontent.com/64260883/89759290-cba33d80-db24-11ea-9a3f-0b07e3b11269.png)
 
 
 ---
 
-  **오토스케일링 구축**
+## 6. 오토스케일링 구축 <a name="a6"></a>  
 
   * **웹서버 종료 후 스냅샷 생성**
   ![snap](https://user-images.githubusercontent.com/64260883/89753240-6f372280-db12-11ea-8d33-bf01ef7fe653.png)
@@ -293,11 +313,11 @@ comments: true
 
 ----
 
- **로드밸런서 구축**  
+## 7. 로드밸런서 구축 <a name="a7"></a>    
 
   * **로드밸런서 생성**  
-  [네트워크 서비스 - 부하분산 - 만들기]  
-  [웹서버의 트래픽을 부하분산을 위해 http 선택]
+  ``[네트워크 서비스 - 부하분산 - 만들기]``   
+  ``[웹서버의 트래픽을 부하분산을 위해 http 선택]``
   ![5555555555555](https://user-images.githubusercontent.com/64260883/89755826-b544b400-db1b-11ea-9643-1e5a4a37df9a.png)  
 
 
@@ -310,21 +330,23 @@ comments: true
   * **프론트앤드 서비스 생성**   
   ![vvvvvvvvvvvvv](https://user-images.githubusercontent.com/64260883/89756153-af030780-db1c-11ea-99b6-f86d61bccb06.png)
 
-  * **오토 스케일링 정상 동작 확인**
-  [스트레스 스크립트로 CPU과부화를 주었을 경우 동작 확인]   
-  ![999999999999](https://user-images.githubusercontent.com/64260883/89756237-de197900-db1c-11ea-8a9c-fa6189cbead7.png)
+  * **오토 스케일링 정상 동작 확인**  
+  ``[스트레스 스크립트로 CPU과부화를 주었을 경우 동작 확인]``
+
+    ![999999999999](https://user-images.githubusercontent.com/64260883/89756237-de197900-db1c-11ea-8a9c-fa6189cbead7.png)
 
   * **생성된 로드밸런서를 설정 및 IP를 확인한다**  
-  [로드밸러서 IP를 사용해 DNS 부하분산을 위한.]  
-  ![ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ](https://user-images.githubusercontent.com/64260883/89756384-48321e00-db1d-11ea-98b2-80e0d496bc5f.png)
+  ``[로드밸러서 IP를 사용해 DNS 부하분산을 위한.]``
+
+    ![ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ](https://user-images.githubusercontent.com/64260883/89756384-48321e00-db1d-11ea-98b2-80e0d496bc5f.png)
 
 -----
 
-  **서비스 동작 확인**
+## 8. 서비스 동작 확인 <a name="a8"></a>    
 
   * **웹사이트 정상 동작 확인**  
   [임의로 워드프레스 기반으로 만든 웹페이지가 정상 동작]  
-  [DNS의 경우 내부로 통신을 했기에 DNS 공인IP를 외부서버에 추가해줘야함]  
+  [DNS의 경우 내부로 통신을 했기에 ``DNS 공인IP를 외부서버에 추가``해줘야함]  
 
     ![스크린샷, 2020-08-10 16-11-44](https://user-images.githubusercontent.com/64260883/89759020-343dea80-db24-11ea-8a5e-63d4719a11af.png)
 
