@@ -88,6 +88,10 @@ tags: Kubernetes
 
 ## 3. PV, PVC 생명주기 <a name="a3"></a>  
 
+* **PV-PVC의 로직은 다음 그림에서 보이는 것 같은 로직입니다.**  
+![스크린샷, 2020-08-14 17-30-59](https://user-images.githubusercontent.com/69498804/90230067-f4447380-de53-11ea-8205-814fa67be805.png)
+
+
 * **PV와 PVC는 다음 그림에서 보이는 것 같은 생명주기를 가집니다.**
 
 
@@ -366,15 +370,14 @@ tags: Kubernetes
 
 * 대표적인 3가지는 아래 가지가 있다.
 
-    * **empty** : 임시로 데이터를 저장하는 빈 볼륨 
+* **empty** : 임시로 데이터를 저장하는 빈 볼륨  
+    
+    * 호스트의 디스크를 임시로 컨테이너 볼륨에 할당해서 사용한다.  
+    * 파드가 사라지면 emprtDir 에 할당했던 컨테이너 볼륨의 데이터도 사라진다.
+    * 단순히 컨테이너를 재시작 했을 때 데이터를 보존하는 역할이다.
+    * 메모리와 디스크를 함께 이용하는 대용량 데이터 계산을 하는 경우와 연산 결과를 중간 데이터 저장용으로 디스크가 필요할 때 사용한다.
 
-        emptyDir은 개별적인 Pod에 적용할 수 있는 Volume으로서  
-        Pod가 생성 될 시 비어있는 볼륨으로 생성된다.  
-        만약 Pod 내에 여러 개의 컨테이너가 정의되어 생성될 경우  
-        그 컨테이너들은 하나의 emptyDir을 공유하게 된다.  
-        또한 Pod가 삭제될 경우 emptyDir 또한 삭제되기 때문에  
-        Pod 내부 컨테이너 간에 공유해야 하는 휘발성 데이터를 저장하기 위해서 사용 될 수 있다.  
-        아래의 예시는 두 개의 컨테이너가 하나의 Pod에서 emptyDir을 공유하는 것을 보여준다
+    * [아래의 예시는 두 개의 컨테이너가 하나의 Pod에서 emptyDir을 공유하는 것을 보여준다]
 
         ```
         1 apiVersion: v1
@@ -401,11 +404,11 @@ tags: Kubernetes
         22    emptyDir: {}                 ----empty에 대한 설정
         ```
 
-        ``spec.containers.volumeMounts.mountPath`` → 실행될 컨테이너 안에 마운트할 경로 입니다.  
+        * ``spec.containers.volumeMounts.mountPath``: 실행될 컨테이너 안에 마운트할 경로 입니다.  
         컨테이너 안에 해당 디렉토리가 없더라도 자동으로 생성 해줍니다.
 
-        ``spec.containers.volumeMounts.mountPath`` → 마운트할 볼륨의 이름 입니다.  
-        ``spec.voluems`` → 위에 작성한 my-empty-volume을 사용하도록 지정 해줍니다.
+        * ``spec.containers.volumeMounts.mountPath``: 마운트할 볼륨의 이름 입니다.  
+        * ``spec.voluems``: 위에 작성한 my-empty-volume을 사용하도록 지정 해줍니다.
 
 
 
@@ -442,11 +445,95 @@ tags: Kubernetes
         Test
         ```
 
-* **hostPath** :
-* NFS 서버
+---
+
+* **hostPath** : 파드가 실행된 호스트의 파일이나 디렉토리를 파드에 마운트한다.
+
+    * hostpath는 호스트의 디렉터리를 Pod와 공유해 사용하는 방식이다.
+    * 컨테이너 재시작시 데이터를 보존하는 역할이다.
+    * 도커 스웜 모드의 호스트 볼륨 마운트와 비슷한 방식이라고 생각하면 쉽다.  
+    * Pod가 삭제되어도 hostpath에 저장된 파일들은 호스트에 저장되어 남아있게 된다. 
+
+    * 그러나 당연하게도 컨테이너가 할당될 특정 호스트를 nodeSelector를 통해 지정해주지 않으면 매번 컨테이너가 다른 호스트에 할당되므로 이 방식은 persistent storage와는 거리가 있다고 볼 수 있다.
 
 
 
 
+    * hostpath는 아래와 같이 정의해 사용할 수 있다.
+        ```
+        apiVersion: v1
+        kind: Pod
+        metadata:
+        name: nasa1515-hostpath-pod
+        spec:
+        containers:
+        - name: nasa1515-hostpath-pod
+            image: arisu1000/simple-container-app:latest
+            volumeMounts:
+            - mountPath: /test-volume
+            name: hostpath-vol
+            ports:
+            - containerPort: 8080
+        volumes:
+        - name: hostpath-vol
+            hostPath:
+            path: /tmp
+            type: Directory
+        ```
 
+        * ``spec.containers.volumeMounts.mountPath``: 실행된 컨테이너 안에 마운트할 경로 입니다.  
+        컨테이너 안에 해당 디렉토리가 없더라도 자동으로 생성 해줍니다.  
+
+        * ``spec.containers.volumeMounts.name``: 마운트할 볼륨의 이름 입니다.
+        * ``spec.voluems.name``: 위에 작성한 hostpath-volume을 사용하도록 지정 해줍니다.
+        * ``spec.voluems.hostPath``: 노드에 마운트할 경로를 정해주고 해당 경로는 Directory 라는것을 명시 합니다.  
+        해당 디렉토리는 노드에 생성되어 있어야 하며, DirectoryOrCreate를 사용할 경우 디렉토리가 존재하지 않으면 디렉토리를 생성 해줍니다.
+
+
+* **NFS 서버** : 호스트에 설정한 NFS 디렉토리를 공유하는 네트워크 볼륨 공유이다.
+
+    * NFS 볼륨은 기존에 사용하는 NFS 서버를 파드에 마운트한다.
+
+    * ``.spec.containers[].securityContext`` 는 컨테이너의 보안 설정을 한다.
+
+    * 컨테이너가 실행중인 호스트 장치의 접근권한을 설정하는 priviledged 필드값으로  
+     모든 호스트 장치에 접근할 수 있도록 할 수 있다.
+        ```
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+        name: nfs-server
+        labels:
+            app: nfs-server
+        spec:
+        replicas: 1
+        selector:
+            matchLabels:
+            app: nfs-server
+        template:
+            metadata:
+            labels:
+                app: nfs-server
+            spec:
+            containers:
+            - name: nfs-server
+                image: arisu1000/nfs-server:latest
+                ports:
+                - name: nfs
+                containerPort: 2049             --nfs 연결 Port
+                - name: mountd
+                containerPort: 20048
+                - name: rpcbind
+                containerPort: 111
+                securityContext:
+                privileged: true
+                volumeMounts:
+                - mountPath: /exports
+                name: hostpath-vol
+            volumes:
+            - name: hostpath-vol
+                hostPath:
+                path: /tmp
+                type: Directory
+        ```
 ---
