@@ -3,7 +3,7 @@ layout: post
 title: "[DOCKER] 네트워크 유형"
 author: Lee Wonseok
 categories: DOCKER
-date: 2020-08-08 09:36
+date: 2020-08-12 09:36
 comments: true
 tags: [DOCKER]
 cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/iot-protocol.jpg
