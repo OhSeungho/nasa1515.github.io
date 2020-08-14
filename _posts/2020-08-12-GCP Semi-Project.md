@@ -104,9 +104,8 @@ comments: true
 
 ## 3. 서버 구축 <a name="a3"></a> 
 
-  **1. VM Instance 생성**
-
-
+  **1. VM Instance 생성**  
+  
   ![스크린샷, 2020-08-04 10-00-11](https://user-images.githubusercontent.com/64260883/89241265-5a9dea80-d639-11ea-8daf-15a819085531.png)
 
 
@@ -161,20 +160,21 @@ comments: true
 * **CLOUD SQL 생성**  
     
     [**MySQL, 리전을 인스턴스와 동일한 SQL 인스턴스를 생성**]  
-
+    
     ![스크린샷, 2020-08-04 10-33-03](https://user-images.githubusercontent.com/64260883/89243033-e580e400-d63d-11ea-8ec0-be652ec77ae5.png)
 
 
-    [**VPC로 인스턴트에 DB를 직접 연결 할 것이라 IP를 추가해줍니다**]
-
+    [**VPC로 인스턴트에 DB를 직접 연결 할 것이라 IP를 추가해줍니다**]  
+    
     ![스크린샷, 2020-08-04 10-31-18](https://user-images.githubusercontent.com/64260883/89242922-a6529300-d63d-11ea-9b6d-8550cda05f52.png)
 
 
-    [**인스턴트에서 연결 후 사용할 DB를 생성해줍니다.**]
-
+    [**인스턴트에서 연결 후 사용할 DB를 생성해줍니다.**]  
+    
     ![스크린샷, 2020-08-04 11-11-39](https://user-images.githubusercontent.com/64260883/89245204-49f27200-d643-11ea-96d2-9c3dd9a33b90.png)
 
       # 구성 정보
+    
       [DB Name : nasa1415]
       [DB IP : 34.64.187.52]
       [WEB SERVER : 35.216.67.219 (CENTOS 7) ]
@@ -193,15 +193,15 @@ comments: true
       php -v
 
 
-    [**PHP가 7.2 버전으로 설치되었는지 확인합니다.**]
-
+    [**PHP가 7.2 버전으로 설치되었는지 확인합니다.**]  
+    
     ![스크린샷, 2020-08-04 11-18-39](https://user-images.githubusercontent.com/64260883/89245659-427f9880-d644-11ea-91ee-439eff531fd2.png)
 
 ---
 
 * **Wordpress**  
-    [**다음 명령으로 Wordpress를 설치합니다**]
-
+    [**다음 명령으로 Wordpress를 설치합니다**]  
+    
     ![스크린샷, 2020-08-04 11-23-04](https://user-images.githubusercontent.com/64260883/89245906-e23d2680-d644-11ea-8509-173f27f49792.png)
 
       yum install -y wget
@@ -211,11 +211,13 @@ comments: true
 
 
     **웹페이지 설정 - DB 연동**  
+    
     [지정 DB NAME], [GCP SQL IP] 등을 입력 해 연동.
     ![aaa](https://user-images.githubusercontent.com/64260883/89596888-73a1d800-d893-11ea-99c6-a3b914465be1.png)
 
     [**연동 위해 인스턴트의 SELINUX 설정이 필요하다**]  
     [**본 포스트에서는 종료하고 진행하였음**]  
+    
     ![sel](https://user-images.githubusercontent.com/64260883/89598140-055f1480-d897-11ea-9bef-0308dd5ef437.png)
 
 
@@ -224,7 +226,8 @@ comments: true
     ![aaaaaa](https://user-images.githubusercontent.com/64260883/89598279-61c23400-d897-11ea-839f-d184557dfec8.png)
 
 
-    [**홈페이지 동작 table이 생성, DB 정상 연동 확인**]
+    [**홈페이지 동작 table이 생성, DB 정상 연동 확인**]  
+    
     ![addddddddddddddddddd](https://user-images.githubusercontent.com/64260883/89598402-af3ea100-d897-11ea-9ffe-ca9986c66165.png)
 
 ----
@@ -235,16 +238,19 @@ comments: true
   웹사이트에 매칭 시켜주도록 설정하였음.  
 
 
-  * **[인스턴스 만들기]를 클릭해서 인스턴스를 생성합니다.**  
-  WEBServer와 동일하게 구성하였음.
+  * **[인스턴스 만들기]를 클릭해서 인스턴스를 생성합니다.**   
 
+    **WEBServer와 동일하게 구성하였음.**  
+    
     ![dbs](https://user-images.githubusercontent.com/64260883/89745943-ca0c5200-daf1-11ea-8ac0-29a9f9fb7826.png)
 
-    GCP 기반의 서버이다 보니 ``DNS 네트워크를 내부로 고정``,     
-  ![ip](https://user-images.githubusercontent.com/64260883/89746273-cb3e7e80-daf3-11ea-8bc8-5c5d7fb80f46.png)
+    GCP 기반의 서버이다 보니 ``DNS 네트워크를 내부로 고정``  
+    
+    ![ip](https://user-images.githubusercontent.com/64260883/89746273-cb3e7e80-daf3-11ea-8bc8-5c5d7fb80f46.png)
 
+----
 
-  * **DNS SERVER 구축**
+  **DNS SERVER 구축**
 
   * **기본적인 DNS 파일 설치 및 환경구성을 위한 명령.**
 
@@ -270,13 +276,13 @@ comments: true
     ![aaaaaaaaa](https://user-images.githubusercontent.com/64260883/89758291-68b0a700-db22-11ea-99e6-6276c529d9c2.png)
 
 
-  * **정상적으로 내부 도메인 통신이 되는지 확인.** 
-
+  * **정상적으로 내부 도메인 통신이 되는지 확인.**  
+  
     ![ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ](https://user-images.githubusercontent.com/64260883/89758746-787cbb00-db23-11ea-964c-26cccecb2df4.png)
 
 
-  * **GCP는 외부 연결이 가능하게 방화벽 설정.**
-
+  * **GCP는 외부 연결이 가능하게 방화벽 설정.**  
+  
     ![스크린샷, 2020-08-10 16-16-02](https://user-images.githubusercontent.com/64260883/89759290-cba33d80-db24-11ea-9a3f-0b07e3b11269.png)
 
 
@@ -284,32 +290,39 @@ comments: true
 
 ## 6. 오토스케일링 구축 <a name="a6"></a>  
 
-  * **웹서버 종료 후 스냅샷 생성**
-  ![snap](https://user-images.githubusercontent.com/64260883/89753240-6f372280-db12-11ea-8d33-bf01ef7fe653.png)
+  * **웹서버 종료 후 스냅샷 생성**  
+  
+    ![snap](https://user-images.githubusercontent.com/64260883/89753240-6f372280-db12-11ea-8d33-bf01ef7fe653.png)
   
   * **스냅샷으로 이미지 생성**  
-  ![ima](https://user-images.githubusercontent.com/64260883/89753351-e8cf1080-db12-11ea-9706-dd36393456c9.png)
+  
+    ![ima](https://user-images.githubusercontent.com/64260883/89753351-e8cf1080-db12-11ea-9706-dd36393456c9.png)
 
   * **이미지로 인스턴트 템플릿 생성**  
-  [인스턴트 생성과 같지만 생성한 이미지 선택.]
-  ![aaaaaa](https://user-images.githubusercontent.com/64260883/89753520-96422400-db13-11ea-82f4-f1f9eea4246e.png)
+    [인스턴트 생성과 같지만 생성한 이미지 선택.]  
+    
+      ![aaaaaa](https://user-images.githubusercontent.com/64260883/89753520-96422400-db13-11ea-82f4-f1f9eea4246e.png)
 
   * **인스턴트 템플릿으로 그룹 생성**  
     [인스턴트 템플릿 선택 후 자동확장 모드 설정]   
     [자동 확장 모드 - 오토스케일링 기능]
     [측정 항목 - 오토스케일링 범위]  
-    ![aqweqqweqweqw](https://user-images.githubusercontent.com/64260883/89754132-ac50e400-db15-11ea-9a0f-1009707f93aa.png)  
+    
+      ![aqweqqweqweqw](https://user-images.githubusercontent.com/64260883/89754132-ac50e400-db15-11ea-9a0f-1009707f93aa.png)  
 
     [대기 시간 등 세부 설정 또한 가능하다.]  
-    ![ㅁ123123123123](https://user-images.githubusercontent.com/64260883/89755145-5a11c200-db19-11ea-9794-22558669ce85.png)
+      
+      ![ㅁ123123123123](https://user-images.githubusercontent.com/64260883/89755145-5a11c200-db19-11ea-9794-22558669ce85.png)
 
 
-    [추가적으로 자동복구 상태 확인을 생성한다.]
-    ![1111111111111111](https://user-images.githubusercontent.com/64260883/89755224-9fce8a80-db19-11ea-8a99-062438ea049d.png)
+    [추가적으로 자동복구 상태 확인을 생성한다.]  
+    
+      ![1111111111111111](https://user-images.githubusercontent.com/64260883/89755224-9fce8a80-db19-11ea-8a99-062438ea049d.png)
 
 
-    [정상적으로 그룹이 생성되었다면 아래와 같이 그룹 별 인스턴트가 생성]
-    ![44444444444](https://user-images.githubusercontent.com/64260883/89755723-5da64880-db1b-11ea-87a6-38d3cf9afde4.png)
+    [정상적으로 그룹이 생성되었다면 아래와 같이 그룹 별 인스턴트가 생성]  
+    
+      ![44444444444](https://user-images.githubusercontent.com/64260883/89755723-5da64880-db1b-11ea-87a6-38d3cf9afde4.png)
 
 ----
 
@@ -317,27 +330,31 @@ comments: true
 
   * **로드밸런서 생성**  
   ``[네트워크 서비스 - 부하분산 - 만들기]``   
-  ``[웹서버의 트래픽을 부하분산을 위해 http 선택]``
-  ![5555555555555](https://user-images.githubusercontent.com/64260883/89755826-b544b400-db1b-11ea-9643-1e5a4a37df9a.png)  
+  ``[웹서버의 트래픽을 부하분산을 위해 http 선택]``  
+  
+    ![5555555555555](https://user-images.githubusercontent.com/64260883/89755826-b544b400-db1b-11ea-9643-1e5a4a37df9a.png)  
 
 
   * **백앤드 서비스 생성**  
-  ![bbab](https://user-images.githubusercontent.com/64260883/89755992-356b1980-db1c-11ea-8cf4-ba58d148c84a.png)
+  
+    ![bbab](https://user-images.githubusercontent.com/64260883/89755992-356b1980-db1c-11ea-8cf4-ba58d148c84a.png)
 
-    [추가적을 상태확인에서 아까 만든 상태확인을 사용한다]
-    ![xxxxxxxxxxxx](https://user-images.githubusercontent.com/64260883/89756099-7bc07880-db1c-11ea-9c87-a7df902e6fee.png)
+    [추가적을 상태확인에서 아까 만든 상태확인을 사용한다]  
+    
+      ![xxxxxxxxxxxx](https://user-images.githubusercontent.com/64260883/89756099-7bc07880-db1c-11ea-9c87-a7df902e6fee.png)
 
-  * **프론트앤드 서비스 생성**   
-  ![vvvvvvvvvvvvv](https://user-images.githubusercontent.com/64260883/89756153-af030780-db1c-11ea-99b6-f86d61bccb06.png)
+  * **프론트앤드 서비스 생성**  
+  
+    ![vvvvvvvvvvvvv](https://user-images.githubusercontent.com/64260883/89756153-af030780-db1c-11ea-99b6-f86d61bccb06.png)
 
   * **오토 스케일링 정상 동작 확인**  
-  ``[스트레스 스크립트로 CPU과부화를 주었을 경우 동작 확인]``
-
+  ``[스트레스 스크립트로 CPU과부화를 주었을 경우 동작 확인]``  
+  
     ![999999999999](https://user-images.githubusercontent.com/64260883/89756237-de197900-db1c-11ea-8a9c-fa6189cbead7.png)
 
   * **생성된 로드밸런서를 설정 및 IP를 확인한다**  
-  ``[로드밸러서 IP를 사용해 DNS 부하분산을 위한.]``
-
+  ``[로드밸러서 IP를 사용해 DNS 부하분산을 위한.]``  
+  
     ![ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ](https://user-images.githubusercontent.com/64260883/89756384-48321e00-db1d-11ea-98b2-80e0d496bc5f.png)
 
 -----
@@ -347,23 +364,27 @@ comments: true
   * **웹사이트 정상 동작 확인**  
   [임의로 워드프레스 기반으로 만든 웹페이지가 정상 동작]  
   [DNS의 경우 내부로 통신을 했기에 ``DNS 공인IP를 외부서버에 추가``해줘야함]  
-
+  
     ![스크린샷, 2020-08-10 16-11-44](https://user-images.githubusercontent.com/64260883/89759020-343dea80-db24-11ea-8a5e-63d4719a11af.png)
 
   * **웹사이트 정상 동작 확인**  
+  
     ![스크린샷, 2020-08-10 16-13-33](https://user-images.githubusercontent.com/64260883/89759139-7404d200-db24-11ea-8bbf-1723e70f4521.png)
 
 
-  * **VPN 설정 후 정상 동작 확인** 
-  ![스크린샷, 2020-08-10 16-14-51](https://user-images.githubusercontent.com/64260883/89759221-a44c7080-db24-11ea-90f6-812e3ec63ec7.png)
+  * **VPN 설정 후 정상 동작 확인**  
+  
+    ![스크린샷, 2020-08-10 16-14-51](https://user-images.githubusercontent.com/64260883/89759221-a44c7080-db24-11ea-90f6-812e3ec63ec7.png)
 
 
   * **로드밸런싱 동작 확인**  
 
     [**로드밸런싱 설정 전 트래픽**]  
-  ![스크린샷, 2020-08-10 16-51-16](https://user-images.githubusercontent.com/64260883/89761607-b846a100-db29-11ea-9a06-c104b4efccc4.png)
+    
+      ![스크린샷, 2020-08-10 16-51-16](https://user-images.githubusercontent.com/64260883/89761607-b846a100-db29-11ea-9a06-c104b4efccc4.png)
 
-    [**로드밸런싱 설정 후 트래픽**]
-  ![스크린샷, 2020-08-10 16-51-42](https://user-images.githubusercontent.com/64260883/89761632-c72d5380-db29-11ea-9a5c-409d182ac80b.png)  
+    [**로드밸런싱 설정 후 트래픽**]  
+    
+      ![스크린샷, 2020-08-10 16-51-42](https://user-images.githubusercontent.com/64260883/89761632-c72d5380-db29-11ea-9a5c-409d182ac80b.png)  
 
 ----
