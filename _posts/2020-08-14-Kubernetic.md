@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Kubernetes] - 볼륨"
+title: "[Kubernetes] - 미정"
 author: Lee Wonseok
 categories: Kubernetes
 date: 2020-08-14 09:36
