@@ -311,7 +311,46 @@ tags: Kubernetes
         PV-PVC TEST
         ```
 
+* **PV와 PVC는 파드와 서비스를 연결할 때처럼 레이블 / 셀렉터를 사용할 수도 있다.**
 
+    * **PV**
+        ```
+        apiVersion: v1
+        kind: PersistentVolume
+        metadata:
+        name: pv-hostpath-label
+        labels:
+            location: local             -----------local
+        spec:
+        capacity:
+            storage: 2Gi
+        volumeMode: Filesystem
+        accessModes:
+        - ReadWriteOnce
+        storageClassName: manual
+        persistentVolumeReclaimPolicy: Delete
+        hostPath:
+            path: /home/nasa1515
+        ```
+
+    * **PVC**
+        ```
+        kind: PersistentVolumeClaim
+        apiVersion: v1
+        metadata:
+        name: pvc-hostpath-label
+        spec:
+        accessModes:
+        - ReadWriteOnce
+        volumeMode: Filesystem
+        resources:
+            requests:
+            storage: 1Gi
+        storageClassName: manual
+        selector:
+            matchLabels:
+            location: local            ---------------local
+        ```
 ---
 
 ## 5. 볼륨 플러그인 <a name="a5"></a>  
