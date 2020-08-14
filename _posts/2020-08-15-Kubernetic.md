@@ -27,7 +27,7 @@ tags: Kubernetes
 - [쿠버네티스의 볼륨](#a1)
 - [PV, PVC](#a2)
 - [PV, PVC 생명주기](#a3)
-- [DB 구축](#a4)
+- [볼륨 플러그인](#a4)
 - [DNS 구성](#a5)
 - [오토스케일링 구축](#a6)
 - [로드밸런서 구축](#a7)
@@ -170,93 +170,117 @@ recycle은 PV의 데이터들을 삭제하고 PV를 다시 새로운 PVC에서 �
 
 ----
 
+## 4. 볼륨 플러그인 <a name="a4"></a>  
+
+* 쿠버네티스 에서 사용할 수 있는 볼륨 플러그인은 무수히 많다. 
+
+    **[몇가지 예시]**  
+
+    ![스크린샷, 2020-08-14 14-04-52](https://user-images.githubusercontent.com/69498804/90215628-25627b00-de37-11ea-8d8e-98d0b2dfcfd2.png)
+
+
+* 대표적인 3가지는 아래 가지가 있다.
+
+    * **empty** : 임시로 데이터를 저장하는 빈 볼륨  
+    emptyDir은 개별적인 Pod에 적용할 수 있는 Volume으로서  
+    Pod가 생성 될 시 비어있는 볼륨으로 생성된다.  
+    만약 Pod 내에 여러 개의 컨테이너가 정의되어 생성될 경우  
+    그 컨테이너들은 하나의 emptyDir을 공유하게 된다.  
+    또한 Pod가 삭제될 경우 emptyDir 또한 삭제되기 때문에  
+    Pod 내부 컨테이너 간에 공유해야 하는 휘발성 데이터를 저장하기 위해서 사용 될 수 있다.  
+    아래의 예시는 두 개의 컨테이너가 하나의 Pod에서 emptyDir을 공유하는 것을 보여준다
+
+        ```
+        1 apiVersion: v1
+        2 kind: Pod
+        3 metadata:
+        4 name: test-pod
+        5 spec:
+        6 containers:
+        7    - image: ubuntu:14.04
+        8    name: ubuntu-container
+        9    command: ["tail","-f", "/dev/null"]
+        10    volumeMounts:
+        11        - mountPath: /data
+        12        name: my-empty-volume
+        13
+        14    - image: nginx
+        15    name: nginx-containe
+        16    volumeMounts:
+        17        - mountPath: /data
+        18        name: my-empty-volume
+        19
+        20 volumes:
+        21    - name: my-empty-volume
+        22    emptyDir: {}
+        ```
+
+        ```
+        [root@nasa1515]# kubectl create -f emp.yaml
+        pod/emp-pod created
+        --------------------------------------------------------------------------
+        [root@nasa1515]# kubectl get po
+        NAME                                   READY     STATUS    RESTARTS   AGE
+        emp-pod                                 2/2       Running   0          39s
+        ```
+
+    * **한 컨테이너에서 /data에 파일을 생성할 경우  
+    다른 컨테이너에서도 해당 파일에서 접근할 수 있다.**
+
+        ```
+        [root@nasa1515]# docker ps | grep ubuntu
+        78a266359307        ubuntu@nasa1515:885bb6705b0... 
+        --------------------------------------------------------------------------
+        [root@nasa1515]# docker exec -it 78 bash
+        root@emp-pod:/# ls
+        bin  boot  data  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+        root@emp-pod:/# cd data/
+        root@emp-pod:/data# echo test >> Test
+        root@emp-pod:/data# exit
+        exit
+        
+        --------------------------------------------------------------------------
+        [root@nasa1515# docker ps | grep nginx
+        7c72d8409845        nginx@nasa1515:d85914d547a6...
+        [root@nasa1515]# docker exec -it 7c bash
+        root@test-pod:/# ls data/
+        Test
+        ```
+
+* **hostPath** :
+* NFS 서버
 
 
 
-퍼시스턴트볼륨(PersistentVolume) 템플릿
-퍼시스턴트 볼륨 템플릿은 다음과 같은 구조입니다.
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-hostpath
-spec:
-  capacity:
-    storage: 2Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: manual
-  persistentVolumeReclaimPolicy: Delete
-  hostPath:
-    path: /tmp/k8s-pv
-
-apiVersion, kind, metadata부분은 다른 것들과 비슷한 구조입니다. spec부분을 주로 살펴 보도록 하겠습니다. 먼저 spec의 capacity부분을 보면 storage용량으로 1기가를 설정한걸 알 수 있습니다. 현재는 용량 관련한 설정만 가능하지만 앞으로는 IOPS나 throughput등도 설정할 수 있도록 추가될 예정입니다. volumeMode는 쿠버네티스 1.9버전에 알파 기능으로 추가된 옵션입니다. 기본값은 filesystem으로 볼륨을 파일시스템형식으로 붙여서 사용하게 합니다. 추가로 설정가능한 옵션은 raw입니다. 볼륨을 로우블록디바이스형식으로 붙여서 사용할 수 있게 해줍니다. 로우블록디바이스를 지원하는 플러그인들은 AWSElasticBlockStore, AzureDisk, FC (Fibre Channel), GCEPersistentDisk, iSCSI, Local volume, RBD (Ceph Block Device) 등이 있습니다.
-accessModes는 볼륨의 읽기/쓰기에 관한 옵션을 지정합니다. 볼륨은 한번에 하나의 accessModes만 설정할 수 있고, 다음 3가지중 하나를 지정할 수 있습니다.
-ReadWriteOnce : 하나의 노드가 볼륨을 읽기/쓰기 가능하게 마운트할 수 있음.
-ReadOnlyMany : 여러개의 노드가 읽기 전용으로 마운트할 수 있음.
-ReadWriteMany : 여러개의 노드가 읽기/쓰기 가능할게 마운트할 수 있음.
-
----------
 
 
-NFS SERVER  설치
-
-    # sudo apt install -y nfs-kernel-server
+---
 
 
-디렉토리 생성 (사용하기위한)
-    # sudo chmod /nfs-volume
+**동적**
+    
+* 해당 깃에서 파일을 받아온다.
+  
+    ```
+    git clone --single-branch --branch release-1.2 https://github.com/rook/rook.git
+    Cloning into 'rook'...
+    remote: Enumerating objects: 60, done.
+    remote: Counting objects: 100% (60/60), done.
+    remote: Compressing objects: 100% (26/26), done.
+    remote: Total 40355 (delta 40), reused 51 (delta 34), pack-reused 40295
+    Receiving objects: 100% (40355/40355), 13.76 MiB | 6.33 MiB/s, done.
+    Resolving deltas: 100% (27455/27455), done.
+    ```
 
-etc/exports 에 아래 내용 추가
+* 해당 경로에서 common 을 실행시켜 기본 구축을 시켜준다
+    ```
+    /rook/cluster/examples/kubernetes/ceph$ kubectl create -f common.yaml
+    ```
 
-
-
-        /nfs-volume     *(rw,sync,subtree_check)
-
-
-index 파일을 하나 만들어줍니다.
-
-    vagrant@kube-master1:~/kubernetes$ echo "HELLO NFS VOLUME" | sudo tee /nfs-volume/index.html
-    HELLO NFS VOLUME
-
-nfs 디렉토리를 설정해줍니다.
-
-    vagrant@kube-master1:~/kubernetes$ sudo chown -R nobody:nobody /nfs-volume/
-    chown: invalid group: ‘nobody:nobody’
-    vagrant@kube-master1:~/kubernetes$ sudo chown -R nobody:nogroup /nfs-volume/
-    vagrant@kube-master1:~/kubernetes$ sudo chmod 777 /nfs-volume/
-    vagrant@kube-master1:~/kubernetes$ ls -lart /nfs-volume/
-    total 12
-    drwxr-xr-x 25 root   root    4096 Aug 14 03:19 ..
-    -rw-r--r--  1 nobody nogroup   17 Aug 14 03:22 index.html
-    drwxrwxrwx  2 nobody nogroup 4096 Aug 14 03:22 .
-
-
-데몬 재 시작 후 정상 구동 확인.
-
-    vagrant@kube-master1:~/kubernetes$ sudo systemctl restart nfs-kernel-server.service 
-    vagrant@kube-master1:~/kubernetes$ 
-    vagrant@kube-master1:~/kubernetes$ systemctl status nfs-kernel-server.service 
-    ● nfs-server.service - NFS server and services
-    Loaded: loaded (/lib/systemd/system/nfs-server.service; enabled; vendor preset: enabled)
-    Active: active (exited) since Fri 2020-08-14 03:24:03 UTC; 10s ago
-    Process: 11112 ExecStopPost=/usr/sbin/exportfs -f (code=exited, status=0/SUCCESS)
-    Process: 11111 ExecStopPost=/usr/sbin/exportfs -au (code=exited, status=0/SUCCESS)
-    Process: 11110 ExecStop=/usr/sbin/rpc.nfsd 0 (code=exited, status=0/SUCCESS)
-    Process: 11142 ExecStart=/usr/sbin/rpc.nfsd $RPCNFSDARGS (code=exited, status=0/SUCCESS)
-    Process: 11141 ExecStartPre=/usr/sbin/exportfs -r (code=exited, status=0/SUCCESS)
-    Main PID: 11142 (code=exited, status=0/SUCCESS)
-
-확인
-
-    vagrant@kube-master1:~/kubernetes$ sudo exportfs
-    /nfs-volume   	<world>
-
-
-nfs PORT 오픈
-
-    vagrant@kube-master1:~/kubernetes$ sudo iptables -A INPUT -p tcp --dport 2039 -j ACCEPT
-    vagrant@kube-master1:~/kubernetes$ sudo iptables -A INPUT -p udp --dport 2039 -j ACCEPT
-
-
-
+* 구축 뒤 해당 yaml 파일을 실행시킨다.
+    
+    ```
+    kubectl create -f operator.yaml 
+    configmap/rook-ceph-operator-config created
+    deployment.apps/rook-ceph-operator created
+    ```
