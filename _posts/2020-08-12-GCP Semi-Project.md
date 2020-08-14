@@ -4,6 +4,8 @@ title: "[GCP] - Toy Project"
 author: Lee Wonseok
 categories: GCP
 comments: true
+cover: "/assets/GCP.png"
+tags: GGP
 ---
 
 
