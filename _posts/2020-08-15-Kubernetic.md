@@ -27,8 +27,8 @@ tags: Kubernetes
 - [쿠버네티스의 볼륨](#a1)
 - [PV, PVC](#a2)
 - [PV, PVC 생명주기](#a3)
-- [볼륨 플러그인](#a4)
-- [DNS 구성](#a5)
+- [PV, PVC 생성](#a4)
+- [볼륨 플러그인](#a5)
 - [오토스케일링 구축](#a6)
 - [로드밸런서 구축](#a7)
 - [서비스 동작 확인](#a8)
@@ -98,9 +98,12 @@ tags: Kubernetes
 
 
     **``생명주기`` : 프로비저닝(Provisioning)**  
-    PV를 사용하기 위해선 먼저 PV가 만들어져 있어야 합니다.  
-    이 PV를 만드는 단계를 ``프로비저닝``이라고 합니다.  
-    PV 프로비저닝 방법에는 2가지가 있습니다.
+    
+    * PV를 사용하기 위해선 먼저 PV가 만들어져 있어야 합니다.  
+    * 이 PV를 만드는 단계를 ``프로비저닝``이라고 합니다.  
+    
+    
+    **PV 프로비저닝 방법에는 2가지가 있습니다.**
     
     * ``정적(static)`` : PV를 미리 만들어두고 사용한다.  
 
@@ -120,57 +123,200 @@ tags: Kubernetes
         스토리지클래스를 이용해서 원하는 스토리지에 PV를 생성합니다.
 
 
+
+    **``생명주기`` : 바인딩(Binding)**  
+    * PV를 PVC에 연결시키는 단계 입니다.  
+    
+    * PVC는 사용자가 요청하는 볼륨을 PV에 요청하고  
+    PV는 그에 맞는 볼륨이 있으면 할당해주게 됩니다.  
+    * 만약 PVC가 요청하는 볼륨이 PV에 없다면 해당 요청은 무한정 남아있게 되고,  
+    PVC가 요청하는 볼륨이 PV에 생성되면 그 요청은 받아들여져 할당해주게 됩니다.
+
+    * PVC와 PV는 ClaimRef를 사용하는 1:1 관계이며  
+    바인딩이 정상적으로 완료될 경우 bound 상태가 됩니다.
+
+
+
+    **``생명주기`` : 사용 (using)**  
+
+    * Pod는 PVC를 볼륨으로 사용 합니다.  
+    클러스터는 PVC를 확인하여 바인딩된 PV를 찾고 해당 볼륨을 Pod에서 사용할 수 있도록 해줍니다.
+
+    * 만약 Pod가 사용중인 PVC를 삭제하려고 하면 Storage Object in Use Protection에 의해 삭제되지 않습니다.  
+    만약 삭제 요청을 하였다면 Pod가 PVC를 사용하지 않을때까지 삭제 요청은 연기 됩니다.
+
+ 
+
+    **``생명주기`` : 회수 (Reclamiming)**  
+    * PV는 기존에 사용했던 PVC가 아니더라도 다른 PVC로 재활용이 가능 합니다.  
+    때문에 사용이 종료된 PVC를 삭제할 때,  
+    사용했던 PV의 데이터를 어떻게 처리할지에 대한 설정을 하게 됩니다.
+
+        * ``Retain`` : PV의 데이터를 그대로 보존 합니다.
+        * ``Recycle`` : 재사용하게될 경우 기존의 PV 데이터들을 모두 삭제 후 재사용 합니다.
+        * ``Delete`` : 사용이 종료되면 해당 볼륨을 삭제 합니다.
+----
+## 4. PV, PVC 생성  <a name="a4"></a>  
+
+
+
+* **``PV 생성``**
+    ```
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+    name: dev-pv
+    spec:
+    capacity:
+        storage: 2Gi
+    volumeMode: Filesystem
+    accessModes:
+    - ReadWriteOnce
+    storageClassName: manual
+    persistentVolumeReclaimPolicy: Delete
+    hostPath:
+        path: /tmp/log_backup
+    ```
+
+    * ``path``: /tmp/log_backup
+    * ``spec.capacity.storage`` → 사용할 용량을 2GB로 설정 합니다.
+    * ``spec.volumeMode`` → 볼륨을 Filesystem으로 사용 합니다.
+    * ``spec.accessModes`` → Pod의 접근 제어를 합니다.
+    * ``ReadWriteOnce`` : 하나의 Pod에서만 읽고 쓸 수 있습니다.
+    * ``ReadOnlyMany`` : 여러개의 Pod에서 읽을 수 있습니다.
+    * ``ReadWriteMany`` : 여러개의 Pod에서 읽고 쓸 수 있습니다.
+    * ``spec.storageClassName`` → 스토리지 클래스를 지정, 클래스에 맞는 PVC와 연결
+    * ``spec.persistentVolumeReclaimPolicy`` → Delete는 볼륨의 사용이 종료되면 볼륨을 삭제 합니다. 위의 회수 단계에서 설명한 필드 입니다.
+    * ``hostPath`` → 노드에 저장되는 디렉토리를 설정 합니다.
+
+    **``accessModes``는 볼륨의 읽기/쓰기에 관한 옵션을 지정합니다.**  
+    볼륨은 한번에 하나의 accessModes만 설정할 수 있고  
+    다음 3가지중 하나를 지정할 수 있습니다.  
+
+    - ``ReadWriteOnce`` : 하나의 노드가 볼륨을 읽기/쓰기 가능하게 마운트할 수 있음.
+    - ``ReadOnlyMany`` : 여러개의 노드가 읽기 전용으로 마운트할 수 있음.
+    - ``ReadWriteMany`` : 여러개의 노드가 읽기/쓰기 가능할게 마운트할 수 있음
+
+
+* **해당 파일로 생성 후 정상 PV 확인**  
+    **아직 PVC가 생성이 되지 않아 ``STATUS``가 ``Available``임.**  
+
+    ![스크린샷, 2020-08-14 16-02-05](https://user-images.githubusercontent.com/69498804/90222701-914cdf80-de47-11ea-9243-f774920b9047.png)
+
+
+
+    **``pv``의 상태는 ``Available``을 포함해서 다음 4가지가 있습니다.**  
+
+    - Available : PVC에서 사용할 수 있게 준비된 상태
+    - Bound : 특정 PVC에 연결된 상태
+    - Released : PVC는 삭제된 상태이고 PV는 아직 초기화되지 않은 상태
+    - Failed : 자동 초기화가 실패한 상태
+
+
+---
+* **``PVC 생성``**  
+    ```
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+    name: dev-pvc
+    spec:
+    accessModes:
+    - ReadWriteOnce
+    volumeMode: Filesystem
+    resources:
+        requests:
+        storage: 1Gi
+    storageClassName: manual
+    ```
+
+    * ``accessModes``: (PV와 동일) 어떤 읽기/쓰기 모드로 연결할지 지정합니다.     [ReadWriteOnce, ReadOnlyMany, ReadWriteMany] 등 설정 가능.
+    
+    * ``volumeMode``: PV와 동일) 파일시스템인지 블록 디바이스인지를 filesystem, raw등을 통해 설정할 수 있습니다.  
+    
+    * ``resources``: 얼만큼의 자원을 사용할 것인지에 대한 요청(request)을 입력합니다.  
+    (여기서는 1기가를 요청했습니다)  
+    앞에서 만들어둔 PV의 용량이 2기가였기 때문에 현재 PVC에서 사용할 수 있습니다.  
+    만약에 PVC가 requests의 storage에 2기가 이상의 용량을 입력했다면 거기에 맞는 PV가 없어서 PVC는 Pending상태로 남게 되고 생성이 안됩니다.  
+
+    * ``storageClassName``: 사용할 스토리지클래스를 명시해 줍니다.
+
+* **해당 파일로 생성 후 정상 PV,PVC 확인**  
+    **PV <-> PVC가 연결되어 ``STATUS``가 ``BOUND``로 바뀐 것을 확인.**  
+
+    ![스크린샷, 2020-08-14 16-05-48](https://user-images.githubusercontent.com/69498804/90222946-07e9dd00-de48-11ea-8191-1df12fc5beae.png)
+
+
+
+* **``PVC 를 사용할 DEP 생성 후 확인``**
+    ```
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+    name: test-deployment
+    labels:
+        app: test-deployment
+    spec:
+    replicas: 1
+    selector:
+        matchLabels:
+        app: test-deployment
+    template:
+        metadata:
+        labels:
+            app: test-deployment
+        spec:
+        containers:
+        - name: test-deployment
+            image: nginx
+            ports:
+            - containerPort: 8080
+            volumeMounts:
+            - mountPath: "/var/log/test.log"
+            name: dev-volume
+        volumes:
+        - name: dev-volume
+            persistentVolumeClaim:
+            claimName: dev-pvc    ----------pvc 의 이름을 입력
+    ```
+
+
+    * ``spec.template.spec.containers.volumeMounts``: 볼륨 마운트할 컨테이너 안의 경로를 작성하고  
+    이 경로를 저장한 볼륨 마운트 정보를 dev-volume 이라는 이름으로 지정합니다.  
+
+    * ``spec.template.spec.volumes``: 위에 작성한 컨테이너에서 사용할 볼륨 마운트 이름(dev-volume)을 가져오고  
+    이 정보와 연결 요청을 보낼 pvc를 2번에서 생성한 ``dev-pvc``로 지정 합니다.
+
+*   ``**파일 생성 테스트**``
+
+    * ``MASTER`` 서버의 PV-PATH 경로에 다음과 같은 파일을 만들었었다.
+        ```
+        vagrant@kube-master1:~/wonseok$ ls -alrt /pv-pvc/pv-pvc-test.txt
+        -rw-r--r-- 1 root root 12 Aug 14 07:35 /pv-pvc/pv-pvc-test.txt
+        vagrant@kube-master1:~/wonseok$ cat /pv-pvc/pv-pvc-test.txt 
+        PV-PVC-TEST
+        vagrant@kube-master1:~/wonseok$ 
+        ```
+ 
+    * 새로 만들어진 PODS에 ``/home/pv-pvs`` 디렉토리가 자동 생성되었고  
+    ``pv-pvc-txt`` 파일의 내용도 들어있는 것을 확인.
+        ```
+        vagrant@kube-master1:~/wonseok$ kubectl exec -it pod/nasa1515-deployment-b664c7ff5-jh677 bash
+
+        root@nasa1515-deployment-b664c7ff5-jh677:/# ls -lart /home/pv-pvs
+        total 12
+        drwxr-xr-x 2 root root 4096 Aug 14 07:33 .
+        -rw-r--r-- 1 root root   12 Aug 14 07:33 pv-pvc.txt
+        drwxr-xr-x 1 root root 4096 Aug 14 07:43 ..
+        root@nasa1515-deployment-b664c7ff5-jh677:/# 
+        root@nasa1515-deployment-b664c7ff5-jh677:/# cat /home/pv-pvs/pv-pvc.txt
+        PV-PVC TEST
+        ```
+
+
 ---
 
-
-* **생명주기 : 바인딩(Binding)**  
-
-    바인딩은 프로비저닝을 통해 만들어진 PV를 PVC와 바인딩하는 단계입니다.  
-    PVC가 원하는 스토리지의 용량과 접근방법을 명시해서 요청하면 거기에 맞는 PV가 할당됩니다.  
-    이 때 PVC에 맞는 PV가 없다면 요청은 실패합니다.  
-    하지만 한 번 실패했다고 요청이 끝나는건 아니고 계속해서 대기하고 있게 됩니다.  
-    그러다가 기존에 사용하던 PV가 반납되거나 새로운 PV가 생성되서  
-    PVC에 맞는 PV가 생기면 PVC에 바인딩이 됩니다.  
-    PV와 PVC의 매핑은 1대1 관계입니다.  
-    하나의 PVC가 여러개의 PV에 바인딩되는건 불가능 합니다.  
-
-* **생명주기 : 사용중(Using)**  
-
-    PVC는 포드에 설정되고 포드는 PVC를 볼륨으로 인식해서 사용하게 됩니다.  
-    할당된 PVC는 포드가 유지되는 동안 계속해서 사용됩니다.  
-    포드가 사용중인 PVC는 시스템에서 임의로 삭제할 수 없습니다.  
-    이 기능을 ``스토리지 객체 보호 (Storage Object in Use Protection)`` 라고 합니다.  
-    사용중인 데이터 스토리지를 임의로 삭제하게 되면 치명적인 결과를 초래할 수 있기 때문에 이런 보호 기능이 있습니다.  
-    포드가 사용중인 PVC를 삭제하려고 하면 상태가 Terminating으로 되지만  
-    해당 PVC를 사용중인 포드가 남아 있는 도중에는 삭제되지 않고 남아 있게 됩니다.  
-    ``kubectl describe``으로 pvc의 상태를 확인해 보면  
-    다음처럼 pvc-protection이 적용되어 있는걸 확인할 수 있습니다.  
-
-        Finalizers:    [kubernetes.io/pvc-protection]
-
-
-* **생명주기 : 리클레이밍(Reclaiming)** 
-
-    사용이 끝난 PVC는 삭제 되고,  
-    PVC가 사용중이던 PV를 ``초기화(reclaim)``하는 과정을 거치게 됩니다.  
-    이것을 ``리클레이밍``이라고 합니다.  
-    초기화 정책은 ``Retain``, ``Delete``, ``Recycle``의 3가지가 있습니다.
-
-    * **Retain**  
-Retain은 단어가 가지는 의미 그대로 PV를 그대로 보존해 둡니다. PVC가 삭제되면 사용중이던 PV는 해제상태만 되고 아직 다른 PVC에 의해 재사용 가능한 상태는 아니게 됩니다. 단순히 사용해제만 됐기 때문에 PV안의 데이터는 그대로 유지가 된채로 남아 있는 상태입니다. 이 PV를 재사용하려면 관리자가 다음 순서대로 직접 초기화를 해주어야 합니다.
-PV 삭제. PV가 만약 외부 스토리지와 연계되어 있었다면 PV는 삭제되더라도 외부 스토리지의 볼륨은 그대로 남아 있는 상태가 됩니다.
-스토리지에 남아 있는 데이터를 직접 정리.
-남아 있는 스토리지의 볼륨을 삭제하거나 재사용하려면 그 볼륨을 이용하는 PV를 다시 만들어 줍니다.
-
-    * **Delete**  
-PV를 삭제하고 연계되어 있는 외부 스토리지 쪽의 볼륨도 삭제합니다. 프로비저닝할 때 동적볼륨할당으로 생성된 PV들은 기본 리클레임 정책이 Delete입니다. 필요하면 처음에 Delete로 설정된 PV의 리클레임 정책을 수정해서 사용해야 합니다.
-
-    * **Recycle**  
-recycle은 PV의 데이터들을 삭제하고 PV를 다시 새로운 PVC에서 사용가능하게 만들어 둡니다. 쿠버네티스에서 지원이 어렵다고해서 지금은 deprecated된 정책입니다. 데이터 초기화용으로 특별한 포드를 만들어두고 초기화할때 사용하는 기능도 있긴 하지만 PV의 데이터들을 초기화하는데 여러가지 상황들을 쿠버네티스에서 모두 지원하기는 어렵다고 판단해서 더 이상 지원하지 않게 되었습니다. 현재는 동적 볼륨 할당을 기본 사용하라고 추천하고 있습니다.
-
-----
-
-## 4. 볼륨 플러그인 <a name="a4"></a>  
+## 5. 볼륨 플러그인 <a name="a5"></a>  
 
 * 쿠버네티스 에서 사용할 수 있는 볼륨 플러그인은 무수히 많다. 
 
@@ -178,17 +324,20 @@ recycle은 PV의 데이터들을 삭제하고 PV를 다시 새로운 PVC에서 �
 
     ![스크린샷, 2020-08-14 14-04-52](https://user-images.githubusercontent.com/69498804/90215628-25627b00-de37-11ea-8d8e-98d0b2dfcfd2.png)
 
+---
+
 
 * 대표적인 3가지는 아래 가지가 있다.
 
-    * **empty** : 임시로 데이터를 저장하는 빈 볼륨  
-    emptyDir은 개별적인 Pod에 적용할 수 있는 Volume으로서  
-    Pod가 생성 될 시 비어있는 볼륨으로 생성된다.  
-    만약 Pod 내에 여러 개의 컨테이너가 정의되어 생성될 경우  
-    그 컨테이너들은 하나의 emptyDir을 공유하게 된다.  
-    또한 Pod가 삭제될 경우 emptyDir 또한 삭제되기 때문에  
-    Pod 내부 컨테이너 간에 공유해야 하는 휘발성 데이터를 저장하기 위해서 사용 될 수 있다.  
-    아래의 예시는 두 개의 컨테이너가 하나의 Pod에서 emptyDir을 공유하는 것을 보여준다
+    * **empty** : 임시로 데이터를 저장하는 빈 볼륨 
+
+        emptyDir은 개별적인 Pod에 적용할 수 있는 Volume으로서  
+        Pod가 생성 될 시 비어있는 볼륨으로 생성된다.  
+        만약 Pod 내에 여러 개의 컨테이너가 정의되어 생성될 경우  
+        그 컨테이너들은 하나의 emptyDir을 공유하게 된다.  
+        또한 Pod가 삭제될 경우 emptyDir 또한 삭제되기 때문에  
+        Pod 내부 컨테이너 간에 공유해야 하는 휘발성 데이터를 저장하기 위해서 사용 될 수 있다.  
+        아래의 예시는 두 개의 컨테이너가 하나의 Pod에서 emptyDir을 공유하는 것을 보여준다
 
         ```
         1 apiVersion: v1
@@ -198,13 +347,13 @@ recycle은 PV의 데이터들을 삭제하고 PV를 다시 새로운 PVC에서 �
         5 spec:
         6 containers:
         7    - image: ubuntu:14.04
-        8    name: ubuntu-container
+        8    name: ubuntu-container              --- 우분투라는 이름의 pods
         9    command: ["tail","-f", "/dev/null"]
         10    volumeMounts:
         11        - mountPath: /data
         12        name: my-empty-volume
         13
-        14    - image: nginx
+        14    - image: nginx                     --- nginx라는 이름의 pods
         15    name: nginx-containe
         16    volumeMounts:
         17        - mountPath: /data
@@ -212,9 +361,18 @@ recycle은 PV의 데이터들을 삭제하고 PV를 다시 새로운 PVC에서 �
         19
         20 volumes:
         21    - name: my-empty-volume
-        22    emptyDir: {}
+        22    emptyDir: {}                 ----empty에 대한 설정
         ```
 
+        ``spec.containers.volumeMounts.mountPath`` → 실행될 컨테이너 안에 마운트할 경로 입니다.  
+        컨테이너 안에 해당 디렉토리가 없더라도 자동으로 생성 해줍니다.
+
+        ``spec.containers.volumeMounts.mountPath`` → 마운트할 볼륨의 이름 입니다.  
+        ``spec.voluems`` → 위에 작성한 my-empty-volume을 사용하도록 지정 해줍니다.
+
+
+
+    * **PODS 생성 후 정상 구동 확인**
         ```
         [root@nasa1515]# kubectl create -f emp.yaml
         pod/emp-pod created
@@ -255,32 +413,3 @@ recycle은 PV의 데이터들을 삭제하고 PV를 다시 새로운 PVC에서 �
 
 
 ---
-
-
-**동적**
-    
-* 해당 깃에서 파일을 받아온다.
-  
-    ```
-    git clone --single-branch --branch release-1.2 https://github.com/rook/rook.git
-    Cloning into 'rook'...
-    remote: Enumerating objects: 60, done.
-    remote: Counting objects: 100% (60/60), done.
-    remote: Compressing objects: 100% (26/26), done.
-    remote: Total 40355 (delta 40), reused 51 (delta 34), pack-reused 40295
-    Receiving objects: 100% (40355/40355), 13.76 MiB | 6.33 MiB/s, done.
-    Resolving deltas: 100% (27455/27455), done.
-    ```
-
-* 해당 경로에서 common 을 실행시켜 기본 구축을 시켜준다
-    ```
-    /rook/cluster/examples/kubernetes/ceph$ kubectl create -f common.yaml
-    ```
-
-* 구축 뒤 해당 yaml 파일을 실행시킨다.
-    
-    ```
-    kubectl create -f operator.yaml 
-    configmap/rook-ceph-operator-config created
-    deployment.apps/rook-ceph-operator created
-    ```
