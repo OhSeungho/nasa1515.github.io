@@ -11,9 +11,14 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 
 
 
-
-
 # [DOCKER] - 네트워크 유형 <a name="a1"></a>
+
+**머리말**  
+ 이번 포스트에서는 도커에서 생성되는 컨테이너들과 긴밀하게 연관되어있는  
+ 도커의 네트워크에 대해서 포스트 했다.  
+
+
+---
 
 
 **목차**
@@ -21,6 +26,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 - [BRIDGE NETWORK](#a2)
 - [HOST NETWORK](#a3)
 
+---
 
 * 도커에는 다양한 네트워크가 존재해 용도에 맞게 네트워크를 선택 할 수 있다.   
 
