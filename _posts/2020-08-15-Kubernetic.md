@@ -222,7 +222,8 @@ tags: Kubernetes
 
 ---
 
-* **``PVC 생성``**  
+* **``PVC 생성``** 
+
     ```
     apiVersion: v1
     kind: PersistentVolumeClaim
@@ -298,6 +299,7 @@ tags: Kubernetes
 *   **``파일 생성 테스트``**
 
     * ``MASTER`` 서버의 PV-PATH 경로에 다음과 같은 파일을 만들었었다.
+
         ```
         vagrant@kube-master1:~/wonseok$ ls -alrt /pv-pvc/pv-pvc-test.txt
         -rw-r--r-- 1 root root 12 Aug 14 07:35 /pv-pvc/pv-pvc-test.txt
@@ -308,6 +310,7 @@ tags: Kubernetes
  
     * 새로 만들어진 PODS에 ``/home/pv-pvs`` 디렉토리가 자동 생성되었고  
     ``pv-pvc-txt`` 파일의 내용도 들어있는 것을 확인.
+
         ```
         vagrant@kube-master1:~/wonseok$ kubectl exec -it pod/nasa1515-deployment-b664c7ff5-jh677 bash
 
@@ -421,6 +424,7 @@ tags: Kubernetes
 
 
     * **PODS 생성 후 정상 구동 확인**
+
         ```
         [root@nasa1515]# kubectl create -f emp.yaml
         pod/emp-pod created
@@ -468,6 +472,7 @@ tags: Kubernetes
 
 
     * hostpath는 아래와 같이 정의해 사용할 수 있다.
+
         ```
         apiVersion: v1
         kind: Pod
@@ -506,6 +511,7 @@ tags: Kubernetes
 
     * 컨테이너가 실행중인 호스트 장치의 접근권한을 설정하는 priviledged 필드값으로  
      모든 호스트 장치에 접근할 수 있도록 할 수 있다.
+     
         ```
         apiVersion: apps/v1
         kind: Deployment
