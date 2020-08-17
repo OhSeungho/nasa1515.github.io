@@ -15,16 +15,14 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 
 **머리말**  
  이전 포스트에서는 도커에 대해서, 도커와 VM과의 차이 에서 포스팅 했었다.  
- 이번 포스트에서는 실제 도커 설치부터 기초적인 명령어에 대해서 포스트 했다.  
+ 이번 포스트에서는 실제 도커의 설치방법 및 확인 방법등에 대해 간단하게 포스트 했다.
 
 
 ---
 
 
-**목차**
+**목차**ㄴ
 - [도커 설치](#a1)
-- [BRIDGE NETWORK](#a2)
-- [HOST NETWORK](#a3)
 
 ---
 
