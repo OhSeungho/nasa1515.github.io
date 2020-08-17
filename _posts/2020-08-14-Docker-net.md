@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "[DOCKER] 네트워크 유형"
+title: "[DOCKER] 네트워크"
 author: Lee Wonseok
 categories: DOCKER
-date: 2020-08-12 09:36
+date: 2020-08-14 09:36
 comments: true
 tags: [DOCKER]
 cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/iot-protocol.jpg
@@ -11,7 +11,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 
 
 
-# [DOCKER] - 네트워크 유형 <a name="a1"></a>
+# [DOCKER] - 네트워크
 
 **머리말**  
  이번 포스트에서는 도커에서 생성되는 컨테이너들과 긴밀하게 연관되어있는  
@@ -27,6 +27,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 - [HOST NETWORK](#a3)
 
 ---
+## [DOCKER] - 네트워크 유형 <a name="a1"></a>
 
 * 도커에는 다양한 네트워크가 존재해 용도에 맞게 네트워크를 선택 할 수 있다.   
 
