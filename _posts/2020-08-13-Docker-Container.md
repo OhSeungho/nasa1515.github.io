@@ -24,6 +24,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 **목차**
 - [도커 이미지](#a1)
 - [도커 이미지 명령어](#a2)
+- [도커 허브를 통한 이미지 업로드, 다운로드](#a3)
 
 ---
 
@@ -251,3 +252,169 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
     - ``Entrypoint`` : cmd와 마찬가지고 실행 할 애플리케이션이다 cmd와 Entry가 함께 있으면  
     Entry는 ``명령``, cmd는 ``인자``처럼 동작한다.
     - ``RootFS`` : 레이어를 나타낸다. 
+
+---
+
+* **``docker save/load``**  명령어를 사용해 호스트에 저장된 이미지를 복사, 불러올 수 있습니다.  
+    명령어의 사용법은 아래와 같습니다.
+
+    ```
+    $ docker save --help
+
+    Usage: docker save [OPTIONS] IMAGE [IMAGE...]
+    ...
+
+    # docker load --help
+
+    Usage: docker load [OPTIONS]
+    ...
+    ```
+
+* **docker save 명령은 ``-o 옵션``을 사용해 파일의 경로를 지정해야한다.**
+
+    centos 이미지를 아카이브 파일로 복사하고 내용을 확인해보았다.
+    ```
+    nasa1515@nasa:~$ docker save -o img.tar centos:latest
+    nasa1515@nasa:~$ 
+    nasa1515@nasa:~$ tar tf img.tar
+    0d120b6ccaa8c5e149176798b3501d4dd1885f961922497cd0abef155c869566.json
+    42f3938b740e458a1d119b6af08468e05a60bce967245f990cf205b99d7b2eee/
+    42f3938b740e458a1d119b6af08468e05a60bce967245f990cf205b99d7b2eee/VERSION
+    42f3938b740e458a1d119b6af08468e05a60bce967245f990cf205b99d7b2eee/json
+    42f3938b740e458a1d119b6af08468e05a60bce967245f990cf205b99d7b2eee/layer.tar
+    manifest.json
+    repositories
+    ```
+
+* **save한 이미지를 테스트 하기 위해 기존에 설치되어 있는 이미지를 삭제한다**
+
+    ```
+    nasa1515@nasa:~$ docker rmi hello-world httpd centos
+    Untagged: centos:latest
+    Untagged: centos@sha256:76d24f3ba3317fa945743bb3746fbaf3a0b752f10b10376960de01da70685fbd
+    Deleted: sha256:0d120b6ccaa8c5e149176798b3501d4dd1885f961922497cd0abef155c869566
+    Deleted: sha256:291f6e44771a7b4399b0c6fb40ab4fe0331ddf76eda11080f052b003d96c7726
+
+    nasa1515@nasa:~$ 
+    nasa1515@nasa:~$ docker images
+    REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+    ```
+
+* **아카이브 파일로 이미지를 로드 후 확인**
+
+    ```
+    nasa1515@nasa:~$ docker load -i img.tar 
+    291f6e44771a: Loading layer [==================================================>]  222.4MB/222.4MB
+    Loaded image: centos:latest
+    nasa1515@nasa:~$ 
+    nasa1515@nasa:~$ docker images
+    REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+    centos              latest              0d120b6ccaa8        6 days ago          215MB
+    ```
+
+----
+
+## 도커 허브를 통한 이미지 업로드, 다운로드 <a name="a3"></a>  
+
+* **도커 이미지 생성**  
+먼저 commit_nasa라는 centos 컨테이너를 하나 만들도록 하겠습니다.
+
+    ```
+    student@cccr:~$ docker run -itd --name commit_nasa centos:latest
+    c4ce10edca0febaddc49c07b31290f542ff2c49751cb16ce0666bc1eac12d6c2
+    ```
+
+* **기존에 있는 이미지로 새로운 이미지를 만들기 위해서는 ``docker commit`` 명령어를 사용하면 됩니다.**
+
+    **[배포 테스트를 위한 이미지를 하나 생성하겠습니다.]**
+    ```
+    nasa1515@nasa:~$ docker commit \
+    > -a "nasa1515" \                   # -a: author, 이미지의 작성자
+    > -m "commit nasa1515" \            # -m: messages, 커밋 메시지
+    > commit_nasa \                     # 복사하고자 하는 이미지
+    > nasa1415/centos:nasa1515          # 이미지:[태그], 태그 생략시 'latest'로 붙음
+    sha256:7f1b0822d1522842d953acb5bea0e4d1481f68d690fe5fc5d6255e58a976c447
+    ------------------------------------------------------------------------------
+    nasa1515@nasa:~$ 
+    nasa1515@nasa:~$ docker images
+    REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+    nasa1415/centos     nasa1515            1fec0eefcf65        4 minutes ago       215MB
+    centos              latest              0d120b6ccaa8        6 days ago          215MB
+    ```
+---
+
+* **이미지 배포**  
+만들어진 이미지를 배포하기 위해 도커 허브 이미지 저장소를 사용합니다.
+
+    일단 https://hub.docker.com로 들어가서 로그인을 합니다.  
+    **[회원가입을 완료 했다면 아래와 같이 저장소가 생성되었을 겁니다]**
+    ![스크린샷, 2020-08-17 12-06-53](https://user-images.githubusercontent.com/69498804/90353781-26d3b380-e082-11ea-95ed-7172e61c65fb.png)
+
+
+* **배포 전 ``docker login`` 명령을 사용해 로그인해줍니다.**  
+
+    ```
+    nasa1515@nasa:~$ docker login
+    Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+    Username: nasa1415
+    Password: 
+    WARNING! Your password will be stored unencrypted in /home/student/.docker/config.json.
+    Configure a credential helper to remove this warning. See
+    https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+    Login Succeeded
+    ```
+
+* **``docker push`` 명령어를 사용해 업로드 해줍니다.**  
+
+    ```
+    $ docker push [이미지 이름]
+    
+    
+    nasa1515@nasa:~$ docker push nasa1415/centos:nasa1515
+    The push refers to repository [docker.io/nasa1415/centos]
+    291f6e44771a: Pushed 
+    nasa1515: digest: sha256:77e7c29b5f9a493a64b981ab17d6d8b0efe5352da325f7f8f78f9101b1d5439b size: 529
+    
+    ```
+    
+* **만약 github에 생성한 저장소 이름과 이미지의 태그가 다르면 업로드가 불가합니다.**
+
+    ```
+    student@cccr:~$ docker push nasa1515/centos
+    The push refers to repository [docker.io/nasa1515/centos]
+    291f6e44771a: Preparing 
+    denied: requested access to the resource is denied
+    ```
+
+* **``push`` 이후 정상적으로 gibhub 저장소에 올라갔음을 확인 할 수 있습니다.**
+
+    ![스크린샷, 2020-08-17 12-27-51](https://user-images.githubusercontent.com/69498804/90354728-153fdb00-e085-11ea-8bee-7b5aa925e77c.png)
+
+----
+
+* **이미지 다운로드**  
+
+* **올려놓은 이미지를 확인하기 위해 기존 host의 이미지를 전부 삭제**  
+
+    ```
+    nasa1515@nasa:~$ docker images
+    REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+    ```
+
+* **``docker pull`` 명령어를 이용해 저장소의 이미지를 다운로드**
+
+    ```
+    nasa1515@nasa:~$ docker pull nasa1415/centos:nasa1515
+    nasa1515: Pulling from nasa1415/centos
+    3c72a8ed6814: Pull complete 
+    Digest: sha256:77e7c29b5f9a493a64b981ab17d6d8b0efe5352da325f7f8f78f9101b1d5439b
+    Status: Downloaded newer image for nasa1415/centos:nasa1515
+    docker.io/nasa1415/centos:nasa1515
+    nasa1515@nasa:~$ 
+    nasa1515@nasa:~$ docker images
+    REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+    nasa1415/centos     nasa1515            1fec0eefcf65        About an hour ago   215MB
+    ```
+
+------
