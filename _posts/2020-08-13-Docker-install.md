@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[DOCKER] - Install & Command"
+title: "[DOCKER] - Install"
 author: Lee Wonseok
 categories: DOCKER
 date: 2020-08-13 09:36
@@ -11,7 +11,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 
 
 
-# [DOCKER]  Install & Command
+# [DOCKER]  Install
 
 **머리말**  
  이전 포스트에서는 도커에 대해서, 도커와 VM과의 차이 에서 포스팅 했었다.  
@@ -21,7 +21,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 ---
 
 
-**목차**ㄴ
+**목차**
 - [도커 설치](#a1)
 
 ---
