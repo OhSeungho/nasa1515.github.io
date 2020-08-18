@@ -235,7 +235,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 * **INSPECT 명령어로 확인해보면 다음과 같다**
 
     ```
-    student@cccr:~$ docker network inspect host
+    nasa1515@nasa:~$ docker network inspect host
     [
         {
             "Name": "host",
@@ -286,13 +286,13 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 *   **``net=none`` 으로 지정하여 컨테이너를 생성해보겠다.**
 
     ```
-    student@cccr:~$ docker run -itd --name none-nasa --net=none centos:latest
+    nasa1515@nasa:~$ docker run -itd --name none-nasa --net=none centos:latest
     6625654470dde0311bd730d1e8a784908995c3d1e8cc7e2b5bf052ffdf24550f
     ```
 
 * **``exec`` 명령을 사용해 네트워크를 확인 결과**
     ```
-    student@cccr:~$ docker exec none-nasa ip a
+    nasa1515@nasa:~$ docker exec none-nasa ip a
     1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
         link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
         inet 127.0.0.1/8 scope host lo
@@ -320,7 +320,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 * **먼저 ``nasa-master`` 라는 이름으로 컨테이너를 생성 했다** 
 
     ```
-    student@cccr:~$ docker run -idt --name nasa-master centos:latest
+    nasa1515@nasa:~$ docker run -idt --name nasa-master centos:latest
     f91ea38db58198c540916d9e697931a77af312a3e6e7f63f6e9f031e33701ba9
     ```
 
@@ -331,10 +331,10 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
     ```
 
     ```
-    student@cccr:~$ docker run -itd --name nasa-slave --net=container:f91ea38db58198 centos:latest
+    nasa1515@nasa:~$ docker run -itd --name nasa-slave --net=container:f91ea38db58198 centos:latest
     e904d45bc36ac6ad16925cc2cef9fbb80e0ac0f858dec129828463ab570a2476
     ------------------------------------------------------------------------------------
-    student@cccr:~$ docker ps
+    nasa1515@nasa:~$ docker ps
     CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS               NAMES
     e904d45bc36a        centos:latest       "/bin/bash"         About a minute ago   Up About a minute                       nasa-slave
     f91ea38db581        centos:latest       "/bin/bash"         8 minutes ago        Up 8 minutes                            nasa-master
@@ -346,7 +346,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
 * **하지만 ``nasa-slave`` 컨테이너는 따로 IP를 갖지 않으며 ``master``와 같은 IP와 MAC 주소를 확인 할 수 있다.**
 
     ```
-    student@cccr:~$ docker exec nasa-master ip a
+    nasa1515@nasa:~$ docker exec nasa-master ip a
     1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
         link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
         inet 127.0.0.1/8 scope host lo
@@ -358,7 +358,7 @@ cover: https://res.cloudinary.com/yangeok/image/upload/v1593160497/logo/posts/io
     
     ---------------------------------------------------------------------------------
 
-    student@cccr:~$ docker exec nasa-slave ip a
+    nasa1515@nasa:~$ docker exec nasa-slave ip a
     1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
         link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
         inet 127.0.0.1/8 scope host lo
