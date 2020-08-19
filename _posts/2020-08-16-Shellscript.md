@@ -181,6 +181,120 @@ streamlined = '능률적인'을 의미하듯 정말 편한 명령어입니다.
 * **2. ``sed -n '/103/p' employees``**  
     **employees파일에서 103을 ``포함``하고 있는 행들을 출력해서 보여준다.**
 
-107로 시작하는 행들을 뽑아줘~ 여기서 '^'는 메타문자로 '시작'을의미해요. 
+    ```
+    student@cccr:/home/won/script$ sed -n '/103/p' employees 
+    103	Alexander	Hunold	AHUNOLD	590.423.4567	06/01/03	IT_PROG	9000		102	60
+    104	Bruce	Ernst	BERNST	590.423.4568	07/05/21	IT_PROG	6000		103	60
+    105	David	Austin	DAUSTIN	590.423.4569	05/06/25	IT_PROG	4800		103	60
+    106	Valli	Pataballa	VPATABAL	590.423.4560	06/02/05	IT_PROG	4800		103	60
+    107	Diana	Lorentz	DLORENTZ	590.423.5567	07/02/07	IT_PROG	4200		103	60
+    ```
 
-그냥 특정 단어를 포함하고 있는 행들을 뽑을 때에는 ^메타 문자 없이 검색하면 됩니다.
+---
+
+* **``파일에서 공백으로 이루어지거나 빈줄 제거하기``**  
+
+* **1. ``sed '/^$/d' employees``**  
+    **employees파일에서 빈 라인들을 지운 후 내용을 출력해준다.**  
+
+    ```
+    student@cccr:/home/won/script$ sed '/^&/d' employees 
+    EMPLOYEE_ID	FIRST_NAME	LAST_NAME	EMAIL	PHONE_NUMBER	HIRE_DATE	JOB_ID	SALARY	COMMISSION_PCT	MANAGER_ID	DEPARTMENT_ID
+    100	Steven	King	SKING	515.123.4567	03/06/17	AD_PRES	24000			90
+    101	Neena	Kochhar	NKOCHHAR	515.123.4568	05/09/21	AD_VP	17000		100	90
+    102	Lex	De Haan	LDEHAAN	515.123.4569	01/01/13	AD_VP	17000		100	90
+    103	Alexander	Hunold	AHUNOLD	590.423.4567	06/01/03	IT_PROG	9000		102	60
+    104	Bruce	Ernst	BERNST	590.423.4568	07/05/21	IT_PROG	6000		103	60
+    105	David	Austin	DAUSTIN	590.423.4569	05/06/25	IT_PROG	4800		103	60
+    106	Valli	Pataballa	VPATABAL	590.423.4560	06/02/05	IT_PROG	4800		103	60
+    107	Diana	Lorentz	DLORENTZ	590.423.5567	07/02/07	IT_PROG	4200		103	60
+    108	Nancy	Greenberg	NGREENBE	515.124.4569	02/08/17	FI_MGR	12008		101	100
+    109	Daniel	Faviet	DFAVIET	515.124.4169	02/08/16	FI_ACCOUNT	9000		108	100
+    ```
+    **추가적으로 빈 라인들을 삭제한 후 결과를 파일로 저장 하고 싶다면 아래 형식을 사용한다.**
+
+    
+    ```
+    sed '/^$/d' employees > new_employees   
+    # " > "(다이렉션)은 덮어쓰기 기능을 한다.
+    # " >> " (리다이렉션)의 경우 기존 파일이 존재하면 덧붙이게 된다.
+    ```
+
+* **3. ``sed '/^ *$/d' employees > new_employees``**  
+    **빈 라인들이나 공백으로 채워진 행들을 삭제한 후 파일로 저장한다.**  
+
+    **보이는 ``*``는 메타문자로 앞의 문자를 0개 이상 찾습니다.  
+    행의 시작이 0개 이상의 공백으로 이뤄지다 끝을 맺으니  
+    공백이거나 빈 줄을 찾아낸다는 의미가 됩니다.**
+
+    위의 예제에서의 ``'d'`` 서브명령어는 ``delete``의 약자로 ``삭제``를 의미합니다.  
+    ``'/'``사이의 단어르 포함한 모든 줄을 삭제시키는 의미입니다.  
+    ``^`` 는 행의 처음을 의미하고 ``$``는 행의 끝을 의미하니까  
+    행의 처음과 끝이 같이 만나있는 것인 빈 줄을 의미합니다.  
+
+
+---
+
+* **``단어 치환``**  
+
+
+
+* **1. ``sed 's/IT_PROG/DEVELOPER/g' employees``**  
+    **``IT_PROG``라고 되어있는 단어를 ``DEVELOPER``로 변경**  
+
+    ```
+    student@cccr:/home/won/script$ sed 's/IT_PROG/DEVELOPER/g' employees 
+    EMPLOYEE_ID	FIRST_NAME	LAST_NAME	EMAIL	PHONE_NUMBER	HIRE_DATE	JOB_ID	SALARY	COMMISSION_PCT	MANAGER_ID	DEPARTMENT_ID
+    100	Steven	King	SKING	515.123.4567	03/06/17	AD_PRES	24000			90
+    101	Neena	Kochhar	NKOCHHAR	515.123.4568	05/09/21	AD_VP	17000		100	90
+    102	Lex	De Haan	LDEHAAN	515.123.4569	01/01/13	AD_VP	17000		100	90
+    103	Alexander	Hunold	AHUNOLD	590.423.4567	06/01/03	DEVELOPER	9000		102	60
+    104	Bruce	Ernst	BERNST	590.423.4568	07/05/21	DEVELOPER	6000		103	60
+    105	David	Austin	DAUSTIN	590.423.4569	05/06/25	DEVELOPER	4800		103	60
+    106	Valli	Pataballa	VPATABAL	590.423.4560	06/02/05	DEVELOPER	4800103	60
+    107	Diana	Lorentz	DLORENTZ	590.423.5567	07/02/07	DEVELOPER	4200		103	60
+    108	Nancy	Greenberg	NGREENBE	515.124.4569	02/08/17	FI_MGR	12008		101	100
+    109	Daniel	Faviet	DFAVIET	515.124.4169	02/08/16	FI_ACCOUNT	9000		108	100
+    ```
+
+* **2. ``sed 's/it_prog/DEVELOPER/gi' employees``**  
+    **기능은 동일하지만 ``i``옵션을 사용하면 대소문자를 구분하지 않습니다.**
+
+
+    **예제에서 ``s``와 같이 쓰이는 ``g`` 플래그는 치환이 행에서 ``전체``를 대상으로 이루어짐을 의미합니다.**  
+
+---
+
+## 4. SED subcommand 명령어 종류와 의미  <a name="a4"></a>  
+
+
+|**subcommand**|**의미**|
+|:---|---|
+|``a``| 현재 행에 하나 이상의 새로운 행을 추가한다.|
+|``c``| 현재 행의 내용을 새로운 내용으로 교체한다.|
+|``d``| 행을 삭제한다. |
+|``i``| 현재 행의 위에 텍스트를 삽입한다. |
+|``h``|	패턴 스페이스의 내용을 홀드 스페이스에 복사한다. |
+|``H``|	패턴 스페이스의 내용을 홀드 스페이스에 추가한다. |
+|``g``|	홀드 스페이스의 내용을 패턴 스페이스에 복사한다. (패턴 스페이스가 비어있지않은 경우에는 덮어쓰기~)|
+|``G``|	홀드 스페이스의 내용을 패턴 스페이스에 복사한다. (패턴 스페이스가 비어있지 않은 경우에는 그 뒤에 추가) |
+|``l``|	출력되지 않는 특수문자를 명확하게 출력한다.|
+|``p``|	행을 출력한다. |
+|``n``|	다음 입력 행을 첫 번째 명령어가 아닌 다음 명령어에서 처리하게 한다. |
+|``q``|	sed를 종료한다.|
+|``r``|	파일로부터 행을 읽어온다.|
+|``!``|	선택된 행을 제외한 나머지 전체 행에 명령어를 적용한다.|
+|``s``|	문자열을 치환한다.|
+
+
+
+* **sed s와 같이 쓰는 치환플래그**   
+
+|**s와 쓰이는 플래그**|	**의미**|
+|:---|---|
+|``g``	|치환이 행 전체에 대해 이뤄진다.|
+|``p``	|행을 출력한다.|
+|``w``	|파일에 쓴다. |
+|``x``	|홀드 버퍼와 패턴 스페이스의 내용을 서로 맞바꾼다. |
+|``y``	|한 문자를 다른 문자로 변환한다. (y에 정규표현식 메타문자를 사용할 수 없다)|
+---
