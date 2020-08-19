@@ -188,11 +188,120 @@ tags: Shell Script
     27:@email
     ```
 
-```
-student@cccr:/home/won/script$ grep -n "....m" nasa1515 
-4:greenplum
-13:gangnam style
-25:bibimbab
-```
- ㅁㄴㅇㅁ
+    ```
+    # m 문자 앞에 5개 이상이 존재하는 텍스트 검색
+    student@cccr:/home/won/script$ grep -n "....m" nasa1515 
+    4:greenplum
+    13:gangnam style
+    25:bibimbab
+    ```
+ 
+* **4. ``*`` 부호 앞의 문자와 여러개 매칭 : ``*``**  
 
+    ```
+    student@cccr:/home/won/script$ grep -n "app*" nasa1515 
+    2:photography
+    21:apple
+    22:grape
+    ------------------------------------------------------------------------------------
+    student@cccr:/home/won/script$ grep -n "^app" nasa1515 
+    21:apple
+    ```
+
+
+
+* **5. 특수 문자와 매칭: ``\``**  
+
+
+    ```
+    student@cccr:/home/won/script$ grep "\@" nasa1515 
+    @email
+    ```    
+ 
+* **6. a나 b로 시작하는 모든 행을 찾아서 출력 : ``^[ab]``** 
+
+    ```
+    student@cccr:/home/won/script$ grep "^[ab]" nasa1515 
+    book
+    blogging
+    apple
+    banana
+    bibimbab
+    ```
+
+* **7. 0~9 사이 숫자로 시작하는 단어 :  ``^[0-9]``** 
+
+    ```
+    student@cccr:/home/won/script$ grep "^[0-9]" nasa1515 
+    123_abc_d4e5
+    123_abc_d4e5.xyz
+    ```
+
+
+
+* **8. x~z 사이 알파벳으로 끝나는 단어 : ``[x-z]$``** 
+
+    ```
+    student@cccr:/home/won/script$ grep "[x-z]$" nasa1515 
+    photography
+    123_abc_d4e5.xyz
+    xyz123_abc_d4e5.xyz
+    ```
+
+---
+
+### 이번에는 간격 정규 표현식입니다.  
+
+**간격 정규 표현식은 문자열 안에서 특정 문자가 ``몇 번 출현`` 했는지를 가지고 패턴 매칭할 때 사용합니다.**  
+
+
+
+* **9. 앞의 문자와 'n'번 정확하게 매칭: ``{n}``**  
+    **``grep -E "character"\{n}`` 의 형식으로 사용합니다.** 
+
+    ```
+    # 기존 파일에서의 g 문자가 포함된 내역은 다음과 같다.
+    student@cccr:/home/won/script$ grep "g" nasa1515 
+    photography
+    greenplum
+    dancing
+    singing
+    english
+    gangnam style
+    pingpong
+    sleeping
+    jogging
+    blogging
+    grape
+    ```
+
+    ```
+    # 이번에는 g가 두번 반복되어있는 문자를 찾아봤다.
+    student@cccr:/home/won/script$ 
+    student@cccr:/home/won/script$ grep -E "g"\{2} nasa1515 
+    jogging
+    blogging
+    ```
+
+----
+
+### 마지막 확장 정규 표현식입니다.  
+**확장 정규 표현식은 ``한 개 이상의 표현식``을 ``결합``하여 사용할 수 있게 해줍니다.**  
+
+* **10. ``\+``앞의 문자가 한번 이상 출현한 문자열과 매칭: `` \+``**  
+
+    ```
+    # 해당 파일에는 k 문자가 포함된 문자열은 다음과 같다.
+    student@cccr:/home/won/script$ grep "k" nasa1515 
+    book
+    milk
+    kimchi
+    ```
+
+    ```
+    # 문자 'k'의 앞에 'o'가 있는 문자열을 선별하고 싶은 경우 "o\+k" 정규표현식 사용
+
+    student@cccr:/home/won/script$ grep "o\+k" nasa1515 
+    book
+    ```
+---
