@@ -121,6 +121,8 @@ tags: Shell Script
     
     ```
 
+---
+
 * 표
 
 
@@ -145,7 +147,7 @@ tags: Shell Script
 
 ---
 
-## awk 사용 예<a name="a4"></a>
+## awk 사용 예 <a name="a4"></a> 
 
 * **예를 들기 위해 아래와 같은 파일을 하나 만들었다**
     ```
