@@ -28,7 +28,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 - [사전준비](#a1)
 - [구성 (Install)](#a2)
-- [PV, PVC 생명주기](#a3)
+- [GCP 인스턴스 생성 및 설정](#a3)
 - [PV, PVC 생성](#a4)
 - [볼륨 플러그인](#a5)
 
@@ -82,7 +82,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-## 구성 (Install)  <a name="a2"></a>   
+## 구성 (Install)  <a name="a2"></a>  
 
 ### **구성 전 안내**
 * **쿠버네티스를 처음으로 만들고, 공개한 회사가 구글이나 보니 구글 클라우드인  
@@ -98,7 +98,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-### Compute Engine에 ``Kubespray`` 를 설치하여 환경 설정
+### Compute Engine에 ``Kubespray`` 를 설치하여 환경 설정 <a name="a3"></a>  
 
 * **``GCP Console``에 접속합니다.**  
 
@@ -194,3 +194,33 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     **``자 이제 마스터 <-> 노드의 통신이 원활해졌습니다.``**
 
 ---
+
+## Kubespray 설치하기 <a name="a4"></a>  
+![스크린샷, 2020-08-20 14-57-48](https://user-images.githubusercontent.com/69498804/90722288-85549800-e2f5-11ea-8eb9-aefa22c73f46.png)
+
+**이제 ``Kubespray``를 설치해보도록 하겠습니다.  
+Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.  
+이를 이용하면 Kubenetes를 손쉽게 설치할 수 있게 도와줍니다.**
+
+
+* **우선 ``Master`` 인스턴스인 ``nasa-master``에서 패키지를 업데이트 합니다.**
+
+    ```
+    [h43254@nasa-master .ssh]$ sudo yum update
+    Loaded plugins: fastestmirror
+    Loading mirror speeds from cached hostfile
+    * base: mirror.navercorp.com
+    * epel: d2lzkl7pfhq30w.cloudfront.net
+    * extras: mirror.navercorp.com
+    * updates: mirror.navercorp.com
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package google-cloud-sdk.x86_64 0:304.0.0-1 will be updated
+    ---> Package google-cloud-sdk.x86_64 0:306.0.0-1 will be an update
+    --> Finished Dependency Resolution
+    ....
+    ....(중략)
+    Updated:
+    google-cloud-sdk.x86_64 0:306.0.0-1                                                                                                                                                        
+    Complete!
+    ```
