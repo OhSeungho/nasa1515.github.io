@@ -17,8 +17,8 @@ tags: Kubernetes
 쿠버네티스 환경을 구성하는 방법은 여러가지가 존재한다.  
 각 서버를 준비하는 방법은 여러 가지가 있겠지만  
 가장 쉽게 생각해볼 수 있는 건 ``VirtualBox`` 와 ``Vagrant`` 를 이용한 ``로컬 VM``로 구성하는 것이다.    
-하지만 이번 포스트에서는 CLOUD에 익숙해지고 싶은 마음 + GCP 무료 크레딧이 아까운 마음에  
-GCP로 진행해보았다.
+하지만 이번 포스트에서는 CLOUD에 익숙해지고 싶은 마음과  
+GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
    
  
@@ -43,7 +43,7 @@ GCP로 진행해보았다.
 
 
 * **이번 포스트에 구성할 노드는 ``Master 노드 하나``와 ``Worker 노드 세 개``로  
-    총 네 개의 서버가 필요합니다.**
+    총 ``네 개``의 서버가 필요합니다.**
 
 * **노드의 최소 요구 사양은 다음과 같습니다.**
 
@@ -54,6 +54,7 @@ GCP로 진행해보았다.
     |메모리|	2 GB 이상
     |OS|	CentOS 7, RHEL 7, Ubuntu 16.04+ etc.
 
+---
 
 * **또한 각 서버는 다음 조건을 만족해야 합니다.**
 
@@ -69,7 +70,7 @@ GCP로 진행해보았다.
 * **각 노드가 사용하는 ``포트``입니다. ``각 포트는 모두 열려`` 있어야 합니다.**
 
     |노드	|프로토콜|	방향|	포트 범위|	목적|	누가 사용?|
-    |---|----|---|-----|---|-----|
+    |--|--|--|--|:-----:|:-----:|
     |Master|	TCP|	Inbound|	6443|	Kubernetes API server|	All
     |Master|	TCP|	Inbound|	2379-2380|	etcd server client API|	kube-apiserver, etcd
     |Master|	TCP|	Inbound|	10250|	Kubelet API	|Self, Control plane
@@ -102,8 +103,7 @@ GCP로 진행해보았다.
 * **``GCP Console``에 접속합니다.**  
 
 * **``INSTANCE`` 동일하게 4개 생성해보겠습니다. (구성 방법은 GCP포스트에 있습니다!!)**  
-
-    ![스크린샷, 2020-08-20 14-20-27](https://user-images.githubusercontent.com/69498804/90719826-4e2fb800-e2f0-11ea-94d4-b8f9dc1d31f4.png)
+![스크린샷, 2020-08-20 14-20-27](https://user-images.githubusercontent.com/69498804/90719826-4e2fb800-e2f0-11ea-94d4-b8f9dc1d31f4.png)
 
 ---
 
@@ -170,13 +170,22 @@ GCP로 진행해보았다.
     **복사한 키를 넣으면 자동으로 왼쪽에 아이디(여기서는  h43254)이 나타납니다.  
     아이디를 확인 한 다음에 저장을 누릅니다.**
 
-    **(만약에 나타나지 않았다면 공개키 코드의 띄어쓰기 때문이니그 확인해야 합니다)**
+    **(만약에 나타나지 않았다면 공개키 코드의 띄어쓰기 때문이니 확인해야 합니다)**
 
 ---
 
 * **메타데이터 정상 확인을 위해 ``NODE1``에 접속 후 확인합니다.**
 
-    ![스크린샷, 2020-08-20 14-47-55](https://user-images.githubusercontent.com/69498804/90721650-25112680-e2f4-11ea-8d93-c6202a38f327.png)
+    ```
+    [h43254@nasa-node1 ~]$ cat .ssh/authorized_keys 
+    # Added by Google
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCJjI66r5lO6y/3NVCDA9RZt98DCs1LDLL4rScU+scCDdIJmEHhqvOSU7bmK+a8BezaoqmlQgBWKt0Yj6FqxXyokAs2KBNEJMDA99yTAiy/R1omopwsgD7Ce50iUDGs6jWvagPktuUznYyi75hQXoTQKt9FEhjBrpLBxoBZUoBgxa67mkc+rn1icoWoKRlAEt1UQzmT13Spx6ueTMYxC5CZIhPlWpTRpe5SthSvuOShv5KZyZ+0ByOycrTUrjDfqIY1zPiOJb5Q92UXbmSbsk2ZEMyD5JCC5kvD4poQBToE/mdFcdvfAkta/l9qh2qmI8FMHKkelLXM0m82yM0IRStR google-ssh {"userName":"h43254@gmail.com","expireOn":"2020-08-20T05:49:24+0000"}
+    # Added by Google
+    ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFwFZIw8RvKf9xUVUx+NO3yzwCMFgqTRB2UxxnjqrxImnPWraBpEKdtY4m/VIxn9hL26OyF3fD+NRGMySo7xlnI= google-ssh {"userName":"h43254@gmail.com","expireOn":"2020-08-20T05:49:22+0000"}
+    # Added by Google         ###### 정상 등록 확인!!! ######
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMcBYtD/NDrxGOyjPJ9DryBOWzoWlVszqI+jqSAUeAsZ+hwjTtyU60I3vuBn9Ge6HcgKfKUccUyGPickMyTXk2qzeMsa9iN0MOgLZ3GM//aFE5z6yoEvjPJ9KxQg9qRrLhUUWqYtBhyegBt26E+YdSWF24ZNutp7CRLtVQpwT/opMkY9XTseaD1kaj1BZF8ls2V5WNCgC504JfPKuKBVKcbuOwBIBv6TyZhhGXRWfKTKpma3/L5Yhc4qNOZGDo913/kkwlMpqPb4JQAEasXELfFPMou9vPOaKEK7CDdcJ/EOkXct7d43vnMRa8360okA+BMP7vJ4c4ElWW+T0op5rt h43254@nasa-master
+    [h43254@nasa-node1 ~]$ 
+    ```
 
     **터미널에서 ``cat .ssh/authorized_keys``를 쳐보면  
     아래와 같이 등록된 키를 확인할 수 있습니다.**
