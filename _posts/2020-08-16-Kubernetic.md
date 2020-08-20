@@ -153,13 +153,15 @@ GCP로 진행해보았다.
     -rw-------. 1 h43254 h43254 1679 Aug 20 05:30 id_rsa
     -rw-r--r--. 1 h43254 h43254  400 Aug 20 05:30 id_rsa.pub       ## 정상 생성.
     ```
-
+---
+    
 * **아래 명령어를 통해서 공개키를 복사하고, 나온 명령어를 복사합니다.**
     
     ```
     [h43254@nasa-master .ssh]$ cat id_rsa.pub 
     ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMcBYtD/NDrxGOyjPJ9DryBOWzoWlVszqI+jqSAUeAsZ+hwjTtyU60I3vuBn9Ge6HcgKfKUccUyGPickMyTXk2qzeMsa9iN0MOgLZ3GM//aFE5z6yoEvjPJ9KxQg9qRrLhUUWqYtBhyegBt26E+YdSWF24ZNutp7CRLtVQpwT/opMkY9XTseaD1kaj1BZF8ls2V5WNCgC504JfPKuKBVKcbuOwBIBv6TyZhhGXRWfKTKpma3/L5Yhc4qNOZGDo913/kkwlMpqPb4JQAEasXELfFPMou9vPOaKEK7CDdcJ/EOkXct7d43vnMRa8360okA+BMP7vJ4c4ElWW+T0op5rt h43254@nasa-master
     ```
+---
 
 * **GCP에 ``공개키를 등록``하기 위해서 ``Compute Engine - 메타데이터- SSH`` 에  서  공개키를 추가합니다.**  
 
@@ -178,3 +180,8 @@ GCP로 진행해보았다.
 
     **터미널에서 ``cat .ssh/authorized_keys``를 쳐보면  
     아래와 같이 등록된 키를 확인할 수 있습니다.**
+
+
+    **``자 이제 마스터 <-> 노드의 통신이 원활해졌습니다.``**
+
+---

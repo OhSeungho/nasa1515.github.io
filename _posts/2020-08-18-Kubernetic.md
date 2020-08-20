@@ -3,7 +3,7 @@ layout: post
 title: "[Kubernetes] - 볼륨"
 author: Lee Wonseok
 categories: Kubernetes
-date: 2020-08-15 09:36
+date: 2020-08-18 09:36
 comments: true
 cover: "/assets/kubernets.jpg"
 tags: Kubernetes
