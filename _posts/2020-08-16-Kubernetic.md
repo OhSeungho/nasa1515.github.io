@@ -224,3 +224,262 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
     google-cloud-sdk.x86_64 0:306.0.0-1                                                                                                                                                        
     Complete!
     ```
+
+* **그리고 ``pip``를 설치해줍니다**  
+    
+    ```
+    [h43254@nasa-master /]$ sudo yum -y install python-pip
+    Loaded plugins: fastestmirror
+    Loading mirror speeds from cached hostfile
+    * base: mirror.navercorp.com
+    * epel: d2lzkl7pfhq30w.cloudfront.net
+    * extras: mirror.navercorp.com
+    * updates: mirror.navercorp.com
+    Resolving Dependencies
+    --> Running transaction check
+    ...
+    ...(중략)
+    python-ipaddress.noarch 0:1.0.16-2.el7                                                       
+    python-setuptools.noarch 0:0.9.8-7.el7                                                       
+
+    Complete!
+    ```
+
+* **패키지가 정상적으로 설치되었는지 확인해봅니다**  
+
+    ```
+    [h43254@nasa-master /]$ pip --version
+    pip 8.1.2 from /usr/lib/python2.7/site-packages (python 2.7)
+    ```
+
+----
+
+### **본격적으로 ``kubesparay``를 설치합니다.**  
+
+*   **``git clone`` 명령어를 통해서 다운로드를 진행합니다.**  
+
+    ```
+    $ git clone https://github.com/kubernetes-sigs/kubespray.git
+    ```
+
+    **``다운로드 완료!!``**
+    ```
+    [h43254@nasa-master /]$ sudo git clone https://github.com/kubernetes-sigs/kubespray.git
+    Cloning into 'kubespray'...
+    remote: Enumerating objects: 3, done.
+    remote: Counting objects: 100% (3/3), done.
+    remote: Total 46404 (delta 2), reused 2 (delta 2), pack-reused 46401
+    Receiving objects: 100% (46404/46404), 13.45 MiB | 6.09 MiB/s, done.
+    Resolving deltas: 100% (25881/25881), done.
+    ```
+---
+
+* **다운받은 디렉토리에 다음과 같이 필요한 파일들이 잘 있는것을 확인 할 수 있습니다.**
+
+    ```
+    $ cd kubespray/
+    $ ls -alrt
+    ```
+
+    ```
+    [h43254@nasa-master /]$ cd /kubespray/
+    [h43254@nasa-master kubespray]$ ls -alrt 
+    total 184
+    dr-xr-xr-x. 18 root root   241 Aug 20 06:26 ..
+    -rw-r--r--.  1 root root   285 Aug 20 06:26 .editorconfig
+    -rw-r--r--.  1 root root   832 Aug 20 06:26 .ansible-lint
+    -rw-r--r--.  1 root root     0 Aug 20 06:26 .nojekyll
+    -rw-r--r--.  1 root root    17 Aug 20 06:26 .markdownlint.yaml
+    -rw-r--r--.  1 root root     0 Aug 20 06:26 .gitmodules
+    -rw-r--r--.  1 root root  1980 Aug 20 06:26 .gitlab-ci.yml
+    drwxr-xr-x.  2 root root   102 Aug 20 06:26 .gitlab-ci
+    -rw-r--r--.  1 root root  1192 Aug 20 06:26 .gitignore
+    drwxr-xr-x.  3 root root    60 Aug 20 06:26 .github
+    -rw-r--r--.  1 root root   289 Aug 20 06:26 .yamllint
+    -rw-r--r--.  1 root root   531 Aug 20 06:26 SECURITY_CONTACTS
+    -rw-r--r--.  1 root root  3272 Aug 20 06:26 RELEASE.md
+    -rw-r--r--.  1 root root 12328 Aug 20 06:26 README.md
+    -rw-r--r--.  1 root root   283 Aug 20 06:26 OWNERS_ALIASES
+    -rw-r--r--.  1 root root   121 Aug 20 06:26 OWNERS
+    -rw-r--r--.  1 root root    85 Aug 20 06:26 Makefile
+    -rw-r--r--.  1 root root 11342 Aug 20 06:26 LICENSE
+    -rw-r--r--.  1 root root   969 Aug 20 06:26 Dockerfile
+    -rw-r--r--.  1 root root  1661 Aug 20 06:26 CONTRIBUTING.md
+    -rw-r--r--.  1 root root    12 Aug 20 06:26 CNAME
+    -rw-r--r--.  1 root root 10127 Aug 20 06:26 Vagrantfile
+    -rw-r--r--.  1 root root    30 Aug 20 06:26 _config.yml
+    -rw-r--r--.  1 root root   148 Aug 20 06:26 code-of-conduct.md
+    -rw-r--r--.  1 root root  4526 Aug 20 06:26 cluster.yml
+    -rw-r--r--.  1 root root   412 Aug 20 06:26 ansible_version.yml
+    -rw-r--r--.  1 root root   927 Aug 20 06:26 ansible.cfg
+    drwxr-xr-x. 13 root root   193 Aug 20 06:26 contrib
+    drwxr-xr-x.  4 root root    33 Aug 20 06:26 inventory
+    -rw-r--r--.  1 root root  1468 Aug 20 06:26 index.html
+    -rw-r--r--.  1 root root   484 Aug 20 06:26 facts.yml
+    drwxr-xr-x.  3 root root   115 Aug 20 06:26 extra_playbooks
+    drwxr-xr-x.  5 root root  4096 Aug 20 06:26 docs
+    drwxr-xr-x.  2 root root    21 Aug 20 06:26 library
+    -rw-r--r--.  1 root root    94 Aug 20 06:26 requirements.txt
+    -rw-r--r--.  1 root root  1705 Aug 20 06:26 remove-node.yml
+    -rw-r--r--.  1 root root   612 Aug 20 06:26 recover-control-plane.yml
+    -rw-r--r--.  1 root root  1172 Aug 20 06:26 mitogen.yml
+    drwxr-xr-x.  2 root root  4096 Aug 20 06:26 logo
+    -rw-r--r--.  1 root root   726 Aug 20 06:26 reset.yml
+    -rw-r--r--.  1 root root  2608 Aug 20 06:26 scale.yml
+    drwxr-xr-x. 17 root root  4096 Aug 20 06:26 roles
+    -rw-r--r--.  1 root root   693 Aug 20 06:26 setup.py
+    -rw-r--r--.  1 root root  1663 Aug 20 06:26 setup.cfg
+    ```
+---
+
+* **``requirements.txt``에 필요한 패키지들이 명시되어 있는데  
+이를 이용해 설치를 진행합니다.**
+
+    ```
+    [h43254@nasa-master kubespray]$ sudo pip install -r requirements.txt
+    Collecting ansible==2.9.6 (from -r requirements.txt (line 1))
+    Downloading https://files.pythonhosted.org/packages/ae/b7/c717363f767f7af33d90af9458d5f1e0960
+    db9c2393a6c221c2ce97ad1aa/ansible-2.9.6.tar.gz (14.2MB)
+        100% |████████████████████████████████| 14.2MB 75kB/s 
+    Collecting jinja2==2.11.1 (from -r requirements.txt (line 2))
+    Downloading https://files.pythonhosted.org/packages/27/24/4f35961e5c669e96f6559760042a55b9bcf
+    ...
+    ...(중략)
+    8e2a0ecf73d21d6b85865da11/MarkupSafe-1.1.1-cp27-cp27mu-manylinux1_x86_64.whl
+    Collecting ruamel.ordereddict; platform_python_implementation == "CPython" and python_version <
+    = "2.7" (from ruamel.yaml==0.16.10->-r requirements.txt (line 6))
+    Downloading https://files.pythonhosted.org/packages/8c/d6/4971e55c60b972160b911368fa4cd756d68
+    739b6616b0cb57d09d8a6ee18/ruamel.ordereddict-0.4.14-cp27-cp27mu-manylinux1_x86_64.whl (93kB)
+        100% |████████████████████████████████| 102kB 9.2MB/s 
+    ```
+
+--- 
+
+* **설치가 잘됬으면 ``ansible``이 설치된 것을 확인 할 수 있습니다.**
+
+    ```
+    [h43254@nasa-master kubespray]$ ansible --version
+    /usr/lib64/python2.7/site-packages/cryptography/__init__.py:39: CryptographyDeprecationWarning: Python 2 is no longer supported by the Python core team. Support for it is now deprecated in cryptography, and will be removed in a future release.
+    CryptographyDeprecationWarning,
+    ansible 2.9.6
+    config file = /kubespray/ansible.cfg
+    configured module search path = [u'/kubespray/library']
+    ansible python module location = /usr/lib/python2.7/site-packages/ansible
+    executable location = /usr/bin/ansible
+    python version = 2.7.5 (default, Apr  2 2020, 13:16:51) [GCC 4.8.5 20150623 (Red Hat 4.8.5-39)]
+    ```
+---
+
+* **기본 ``inventory/sample``을 ``inventory/mycluster`` 로 복사합니다.**
+
+    ```
+    [h43254@nasa-master kubespray]$ cp -rfp inventory/sample inventory/mycluster
+    cp: cannot create directory ‘inventory/mycluster’: Permission denied
+    [h43254@nasa-master kubespray]$ sudo cp -rfp inventory/sample inventory/mycluster
+    [h43254@nasa-master kubespray]$ ls -alrt inventory/mycluster/
+    total 4
+    drwxr-xr-x. 4 root root  52 Aug 20 06:26 group_vars
+    -rw-r--r--. 1 root root 994 Aug 20 06:26 inventory.ini
+    drwxr-xr-x. 3 root root  45 Aug 20 06:26 .
+    drwxr-xr-x. 5 root root  50 Aug 20 06:45 ..
+    ```
+
+---
+
+* **디렉토리의 ``tree 구조``를 보기 위해서 tree 패키지를 설치합니다.**
+
+    ```
+    [h43254@nasa-master kubespray]$ sudo apt install tree
+    sudo: apt: command not found
+    [h43254@nasa-master kubespray]$ 
+    [h43254@nasa-master kubespray]$ sudo yum -y install tree
+    Loaded plugins: fastestmirror
+    Loading mirror speeds from cached hostfile
+    * base: mirror.navercorp.com
+    * epel: d2lzkl7pfhq30w.cloudfront.net
+    * extras: mirror.navercorp.com
+    * updates: mirror.navercorp.com
+    Resolving Dependencies
+    ...
+    ...(중략)
+    Transaction test succeeded
+    Running transaction
+    Installing : tree-1.6.0-10.el7.x86_64                                                    1/1 
+    Verifying  : tree-1.6.0-10.el7.x86_64                                                    1/1 
+    Installed:
+    tree.x86_64 0:1.6.0-10.el7                                                                   
+    Complete!
+    ```
+
+---
+
+* **``tree``로 ``group_vars 디렉토리``를 보면 설치에 필요한 ``yml 파일``이 있는걸 확인**
+
+    ```
+    [h43254@nasa-master kubespray]$ tree inventory/mycluster/group_vars
+    inventory/mycluster/group_vars
+    ├── all
+    │   ├── all.yml
+    │   ├── aws.yml
+    │   ├── azure.yml
+    │   ├── containerd.yml
+    │   ├── coreos.yml
+    │   ├── docker.yml
+    │   ├── gcp.yml
+    │   ├── oci.yml
+    │   ├── openstack.yml
+    │   └── vsphere.yml
+    ├── etcd.yml
+    └── k8s-cluster
+        ├── addons.yml
+        ├── k8s-cluster.yml
+        ├── k8s-net-calico.yml
+        ├── k8s-net-canal.yml
+        ├── k8s-net-cilium.yml
+        ├── k8s-net-contiv.yml
+        ├── k8s-net-flannel.yml
+        ├── k8s-net-kube-router.yml
+        ├── k8s-net-macvlan.yml
+        └── k8s-net-weave.yml
+    2 directories, 21 files
+    ```
+
+---
+
+* **설치를 위한 설정으로 ``inventory.ini``를 수정합니다.**
+
+    ```
+    vi inventory/mycluster/inventory.ini
+    ```
+
+    ```
+    [h43254@nasa-master kubespray]$ cat inventory/mycluster/inventory.ini 
+    [all]   ### ip는 GCP 내부 고정 IP 를 넣으시면 됩니다.!!
+    nasa-master      ansible_host=10.178.0.2        ip=10.178.0.2   etcd_member_name=etcd1
+    nasa-node1       ansible_host=10.178.0.4        ip=10.178.0.4    etcd_member_name=etcd2
+    nasa-node2       ansible_host=10.178.0.5        ip=10.178.0.5    etcd_member_name=etcd3
+    nasa-node3       ansible_host=10.178.0.3        ip=10.178.0.3    etcd_member_name=etcd4
+    [kube-master]
+    nasa-master
+    [etcd]
+    nasa-master
+    nasa-node1
+    nasa-node2
+    nasa-node3
+    [kube-node]
+    nasa-node1
+    nasa-node2
+    nasa-node3
+    [calico-rr]
+    [k8s-cluster:children]
+    kube-master
+    kube-node
+    calico-rr
+    ```
+---
+
+* **수정이 끝나고 필요로 하는 ``의존성 및 설정``을 세팅합니다.**
+
+$ ansible-playbook -i inventory/mycluster/inventory.ini -v --become --become-user=root cluster.yml
+
+->> 여기서 막힘 내일 수정
