@@ -482,4 +482,6 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
 
 $ ansible-playbook -i inventory/mycluster/inventory.ini -v --become --become-user=root cluster.yml
 
+
+$HOME/.ssh/authorized_keys 문제로 보임
 ->> 여기서 막힘 내일 수정
