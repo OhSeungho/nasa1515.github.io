@@ -112,6 +112,39 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     ![스크린샷, 2020-08-20 14-24-55](https://user-images.githubusercontent.com/69498804/90720126-eded4600-e2f0-11ea-963e-c7d5203642b8.png)
 
 ---
+### **앤서블의 인벤토리는 SSH(RSA) 기반으로 동작하므로 공개키를 공유해줘야 합니다.**
+
+* **각 인스턴스 별로 ``호스트 네임``을 설정해줍니다.**  
+    **사실 GCP는 자동적으로 인스턴스의 이름을 받아오지만  
+    GCP가 아닌 직접 구성을 할 경우에는 호스트네임을 모두 바꿔주어야 합니다.**
+
+    ```
+    [h43254@nasa-node3 ~]$ hostnamectl set-hostname nasa-node3
+    [h43254@nasa-node3 ~]$ hostname
+    nasa-node3
+    ```
+
+* **``MASTER`` 인스턴스에 HOST 정보 및 SSH 권한 설정을 합니다.**  
+    **GCP에서는 할 필요가 없지만 직접 구성시에는 필요합니다.**
+
+
+*   **``/etc/hosts``에 각 노드 등록**
+    ```
+    [h43254@nasa-master ~]$ sudo cat /etc/hosts
+    127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+    ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+    10.178.0.2      nasa-master
+    10.178.0.4      nasa-node1
+    10.178.0.5      nasa-node2
+    10.178.0.3      nasa-node3
+    ```
+
+* **``ssh 유저 권한 설정``을 위해 ``master서버``의 ``/etc/sudoers`` 파일에 내용을 추가** 
+
+    ![스크린샷, 2020-08-21 09-49-17](https://user-images.githubusercontent.com/69498804/90839950-b5eb0f00-e393-11ea-94a3-b7dabd3c2d51.png)
+
+    **h43254라는 유저에 대해서 패스워드를 물어보지 않겠다는 설정입니다.**
+---
 
 * **``공개키 설정``을 위해서 SSH 버튼을 눌러서 ``nasa-master``에 접속해  
     ``ssh-keygen -t rsa``를 입력해 공개키를 생성합니다.**  
@@ -373,7 +406,7 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
 * **기본 ``inventory/sample``을 ``inventory/mycluster`` 로 복사합니다.**
 
     ```
-    [h43254@nasa-master kubespray]$ cp -rfp inventory/sample inventory/mycluster
+    [h43254@nasa-master kubespray]$ cp -rfp inventory/sample inventory/cluster
     cp: cannot create directory ‘inventory/mycluster’: Permission denied
     [h43254@nasa-master kubespray]$ sudo cp -rfp inventory/sample inventory/mycluster
     [h43254@nasa-master kubespray]$ ls -alrt inventory/mycluster/
@@ -383,6 +416,8 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
     drwxr-xr-x. 3 root root  45 Aug 20 06:26 .
     drwxr-xr-x. 5 root root  50 Aug 20 06:45 ..
     ```
+
+    **inventory를 복사할 디렉토리 이름은 아무이름이나 설정해도 됩니다.**
 
 ---
 
@@ -452,36 +487,47 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
     vi inventory/mycluster/inventory.ini
     ```
 
-    ```
-    [h43254@nasa-master kubespray]$ cat inventory/mycluster/inventory.ini 
-    [all]   ### ip는 GCP 내부 고정 IP 를 넣으시면 됩니다.!!
-    nasa-master      ansible_host=10.178.0.2        ip=10.178.0.2   etcd_member_name=etcd1
-    nasa-node1       ansible_host=10.178.0.4        ip=10.178.0.4    etcd_member_name=etcd2
-    nasa-node2       ansible_host=10.178.0.5        ip=10.178.0.5    etcd_member_name=etcd3
-    nasa-node3       ansible_host=10.178.0.3        ip=10.178.0.3    etcd_member_name=etcd4
-    [kube-master]
-    nasa-master
-    [etcd]
-    nasa-master
-    nasa-node1
-    nasa-node2
-    nasa-node3
-    [kube-node]
-    nasa-node1
-    nasa-node2
-    nasa-node3
-    [calico-rr]
-    [k8s-cluster:children]
-    kube-master
-    kube-node
-    calico-rr
-    ```
+
+    ![스크린샷, 2020-08-21 10-18-49](https://user-images.githubusercontent.com/69498804/90841465-b7b6d180-e397-11ea-9c8b-a129f1e9b5ce.png)
+
+    * **``[all]`` 그룹에는 인스턴스의 내부 아이피를 입력합니다**  
+    * **``[kube-master]`` 그룹에는 마스터로 사용할 인스턴스 명을 넣습니다.**
+    * **``[etcd]`` 그룹에는 etcd를 사용할 인스턴스를 입력합니다 (홀수)**
+    * **``[kube-node]`` 그룹에는 노드로 사용 할 인스턴스 명을 넣습니다.**
+
 ---
 
-* **수정이 끝나고 필요로 하는 ``의존성 및 설정``을 세팅합니다.**
+* **``SSH KEY``를 한번 사용해서 마스터와 동기화 시켜줍니다**
 
-$ ansible-playbook -i inventory/mycluster/inventory.ini -v --become --become-user=root cluster.yml
+    ```
+    [h43254@nasa-master ~]$ ssh h43254@nasa-node1
+    Last login: Thu Aug 20 09:12:40 2020 from nasa-master.asia-northeast3-a.c.nasa1515.internal
+    [h43254@nasa-node1 ~]$ exit
+    logout
+    Connection to nasa-node1 closed.
+    [h43254@nasa-master ~]$ ssh h43254@nasa-node2
+    The authenticity of host 'nasa-node2 (10.178.0.5)' can't be established.
+    ECDSA key fingerprint is SHA256:+Pcsu6s4ImB0kob1TZ41ieS8wz2drCalVIVzBawpRlk.
+    ECDSA key fingerprint is MD5:26:6a:41:28:c8:5a:77:3e:04:7d:88:1e:14:44:d8:14.
+    Are you sure you want to continue connecting (yes/no)? yes
+    Warning: Permanently added 'nasa-node2' (ECDSA) to the list of known hosts.
+    Last login: Thu Aug 20 09:12:40 2020 from nasa-master.asia-northeast3-a.c.nasa1515.internal
+    [h43254@nasa-node2 ~]$ exit
+    logout
+    Connection to nasa-node2 closed.
+    [h43254@nasa-master ~]$ ssh h43254@nasa-node3
+    Last login: Fri Aug 21 00:43:40 2020 from 35.235.240.229
+    [h43254@nasa-node3 ~]$ exit
+    logout
+    Connection to nasa-node3 closed.
+    [h43254@nasa-master ~]$ 
+    ```
+    **위와 같이 ``ssh``로 한번씩 접속만 해주면 됩니다.**
 
+---
 
-$HOME/.ssh/authorized_keys 문제로 보임
-->> 여기서 막힘 내일 수정
+* **모두 완료 되었으면 필요로 하는 ``의존성 및 설정``을 세팅합니다.**
+
+    ```
+    $ ansible-playbook -i kubespray/inventory/cluster/inventory.ini -v --become --become-user=root kubespray/cluster.yml
+    ```
