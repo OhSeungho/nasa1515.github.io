@@ -57,11 +57,19 @@ tags: Kubernetes
 
 
 
+---
+
+* **정상적으로 설치가 되었습니다.**
+
+    ![스크린샷, 2020-08-21 11-11-23](https://user-images.githubusercontent.com/69498804/90844636-5692fc00-e39f-11ea-9bce-2d1bea280a1c.png)
+    **``skipped``이 많긴하지만 여러 테스트를 하며 설치를 해서 상관없습니다**
+
+---
 
 
+*   **``root 권한``으로 ``노드 정보``를 정상적으로 받아옴을 확인합니다**
 
-
-
+    ![스크린샷, 2020-08-21 11-36-30](https://user-images.githubusercontent.com/69498804/90846161-91e2fa00-e3a2-11ea-86e4-cbaf96a90258.png)
 
 ---
 
