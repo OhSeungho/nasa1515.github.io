@@ -28,9 +28,8 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 - [사전준비](#a1)
 - [구성 (Install)](#a2)
-- [GCP 인스턴스 생성 및 설정](#a3)
-- [PV, PVC 생성](#a4)
-- [볼륨 플러그인](#a5)
+- [Compute Engine에 ``Kubespray`` 를 설치하여 환경 설정](#a3)
+- [Kubespray 설치하기](#a4)
 
 
 
@@ -535,8 +534,19 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
     ![스크린샷, 2020-08-21 11-11-23](https://user-images.githubusercontent.com/69498804/90844636-5692fc00-e39f-11ea-9bce-2d1bea280a1c.png)
     **``skipped``이 많긴하지만 여러 테스트를 하며 설치를 해서 상관없습니다**
 
+---
 
-*   **``root 권한``으로 ``노드 정보``를 정상적으로 받아옴을 확인합니다**
+* **간혹가다 다음과 같은 에러가 발생할 경우에는 디렉토리를 수동으로 생성해주면 됩니다**
+    ![스크린샷, 2020-08-21 10-42-48](https://user-images.githubusercontent.com/69498804/90846348-e71f0b80-e3a2-11ea-91c9-ffecd03462cb.png)
+
+    ```
+    sudo mkdir credentials
+    ```
+
+
+---
+
+*   **설치가 완료되고 ``root 권한``으로 ``노드 정보``를 정상적으로 받아옴을 확인합니다**
 
     ![스크린샷, 2020-08-21 11-36-30](https://user-images.githubusercontent.com/69498804/90846161-91e2fa00-e3a2-11ea-86e4-cbaf96a90258.png)
 ---
