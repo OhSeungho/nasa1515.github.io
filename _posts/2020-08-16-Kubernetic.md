@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Kubernetes] - GCP 기반 k8s환경구성[kubespray]"
+title: "[Kubernetes] - GCP 기반 k8s환경구성 - [kubespray]"
 author: Lee Wonseok
 categories: Kubernetes
 date: 2020-08-16 09:36
@@ -147,7 +147,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     systemctl stop firewalld
     ```
 
-* **``SELinux(Security-Enhanced Linux)``를 꺼줍니다.  
+* **``SELinux(Security-Enhanced Linux)``를 꺼줍니다.**  
 **컨테이너가 호스트의 파일시스템에 접속할 수 있도록 해당 기능을 꺼야 합니다.**
 
     ```

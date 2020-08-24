@@ -13,11 +13,9 @@ tags: Kubernetes
 
 #  KUBERNETES - GCP 기반의 k8S 환경구성 - [kubeadm]
 **머리말**  
-쿠버네티스 환경을 구성하는 방법은 여러가지가 존재한다.  
-각 서버를 준비하는 방법은 여러 가지가 있겠지만  
-가장 쉽게 생각해볼 수 있는 건 ``VirtualBox`` 와 ``Vagrant`` 를 이용한 ``로컬 VM``로 구성하는 것이다.    
-하지만 이번 포스트에서는 CLOUD에 익숙해지고 싶은 마음과  
-GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
+이전 포스트에서는 kubespay 자동화 툴을 사용해서 K8S 클러스터를 구축했었다.  
+이번 포스트에서는 kubeadm을 이용해서 K8S 클러스터를 구축하는 방법에 대해서 포스트했다.  
+
 
    
  
@@ -27,9 +25,13 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 - [사전준비](#a1)
 - [구성 (Install)](#a2)
-- [Compute Engine 환경 설정](#a3)
-- [ANSIBLE  설치하기](#a4)
+- [사전 작업하기](#a3)
+- [쿠버네티스  설치하기 [kubeadm]](#a4)
+- [WORKER 노드 설정](#a5)
+- [설치 후 동작 테스트](#a6)
 
+
+WORKER 노드 설정
 
 
 ---
@@ -112,7 +114,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-### Compute Engine 환경 설정 <a name="a3"></a>  
+### Compute Engine 환경 설정 
 
 * **``GCP Console``에 접속합니다.**  
 
@@ -128,7 +130,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-### **사전 작업하기**
+### **사전 작업하기** <a name="a3"></a> 
 
 **사전 작업은 master, node1, node2 모두 동일하게 진행합니다.**
 
@@ -162,7 +164,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     systemctl stop firewalld
     ```
 
-* **``SELinux(Security-Enhanced Linux)``를 꺼줍니다.  
+* **``SELinux(Security-Enhanced Linux)``를 꺼줍니다.**   
 **컨테이너가 호스트의 파일시스템에 접속할 수 있도록 해당 기능을 꺼야 합니다.**
 
     ```
@@ -325,7 +327,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     EOF
     ```
 
-* **CENSOS ``yum update``**
+* **``CENSOS yum update``**
 
     ```
     $ yum -y update
@@ -423,7 +425,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-### WORKER 노드 설정
+### WORKER 노드 설정 <a name="a5"></a>  
 
 *   **``도커 실행``**
 
@@ -467,7 +469,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-### **Pod network add-on 설치하기**
+### **Pod network add-on 설치하기** <a name="a6"></a> 
 **``Pod`` 은 실제로 여러 노드에 걸쳐 배포되는데, Pod 끼리는 하나의 네트워크에 있는 것처럼 통신할 수 있습니다.  
 이를 ``오버레이 네트워크(Overlay Network)``라고 합니다.**
 
@@ -489,7 +491,7 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
     **``CNI``를 설치하면 ``CoreDNS Pod`` 이 ``정상적으로 동작``하게 됩니다.**
 
-* **각 노드와 상태를 확인해보겠습니다**
+* **각 노드와 상태를 확인해보겠습니다** 
 
     ```
     [root@nasa-master ~]# kubectl get nodes
