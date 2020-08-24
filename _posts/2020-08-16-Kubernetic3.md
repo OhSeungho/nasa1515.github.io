@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Kubernetes] - GCP 기반 k8s환경구성 - ansible 배포"
+title: "[Kubernetes] - GCP 기반 k8s환경구성 - [kubeadm]"
 author: Lee Wonseok
 categories: Kubernetes
 date: 2020-08-16 09:36
@@ -11,8 +11,7 @@ tags: Kubernetes
 
 
 
-#  KUBERNETES - GCP 기반의 k8S 환경구성 - ansible 배포 방식
-
+#  KUBERNETES - GCP 기반의 k8S 환경구성 - [kubeadm]
 **머리말**  
 쿠버네티스 환경을 구성하는 방법은 여러가지가 존재한다.  
 각 서버를 준비하는 방법은 여러 가지가 있겠지만  
@@ -304,13 +303,13 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
 ---
 
-## 쿠버네티스  설치하기 <a name="a4"></a>  
+## 쿠버네티스  설치하기 [kubeadm] <a name="a4"></a>  
 
 
 **본격적인 설치 과정입니다.**
 **``Kubeadm``은 ``Kubelet`` 과 ``Kubectl`` 을 ``설치하지 않기`` 때문에 직접 설치해야 합니다.**  
 
-* **아래 ``리파지토리``를 추가하고 설치 및 실행합니다.**  
+* **아래 ``리파지토리``를 추가합니다.**  
 
 
     ```
@@ -324,10 +323,41 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
     exclude=kube*
     EOF
-
-    yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-    systemctl enable kubelet && systemctl start kubelet
     ```
+
+* **CENSOS ``yum update``**
+
+    ```
+    $ yum -y update
+    ```
+
+* **``도커 설치 전 사전 세팅``**  
+
+    ```
+    $ yum install -y yum-utils device-mapper-persistent-data lvm2 
+    ```
+
+* **``도커 저장소 설정``**  
+
+    ```
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    ```
+
+* **``도커 패키지 설치``**  
+
+    
+    ```
+    yum update && yum install docker-ce-18.06.2.ce
+    ```
+
+* **``쿠버네티스 설치``**  
+
+ 
+    ```
+    yum install -y --disableexcludes=kubernetes kubeadm-1.15.5-0.x86_64 kubectl-1.15.5-0.x86_64 kubelet-1.15.5-0.x86_64
+    ```
+
+    **1.15 버전으로 설치하는 이유 : 헬스체크 이슈, 대쉬보드 호환성**
 
 ---
 * **``Master 노드``에 ``컨트롤 구성 요소를 설치``합니다.**  
@@ -335,16 +365,15 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 설치 시 사용할 이미지를 먼저 다운로드 합니다.**
 
     ```
-    [root@nasa-master .ssh]# kubeadm config images pull
-    W0821 07:29:05.475821    2222 configset.go:202] WARNING: kubeadm cannot validate component c
-    onfigs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
-    [config/images] Pulled k8s.gcr.io/kube-apiserver:v1.18.8
-    [config/images] Pulled k8s.gcr.io/kube-controller-manager:v1.18.8
-    [config/images] Pulled k8s.gcr.io/kube-scheduler:v1.18.8
-    [config/images] Pulled k8s.gcr.io/kube-proxy:v1.18.8
-    [config/images] Pulled k8s.gcr.io/pause:3.2
-    [config/images] Pulled k8s.gcr.io/etcd:3.4.3-0
-    [config/images] Pulled k8s.gcr.io/coredns:1.6.7
+    [root@nasa-master ~]# kubeadm config images pull
+    I0824 02:21:37.374466   13234 version.go:248] remote version is much newer: v1.18.8; falling back to: stable-1.15
+    [config/images] Pulled k8s.gcr.io/kube-apiserver:v1.15.12
+    [config/images] Pulled k8s.gcr.io/kube-controller-manager:v1.15.12
+    [config/images] Pulled k8s.gcr.io/kube-scheduler:v1.15.12
+    [config/images] Pulled k8s.gcr.io/kube-proxy:v1.15.12
+    [config/images] Pulled k8s.gcr.io/pause:3.1
+    [config/images] Pulled k8s.gcr.io/etcd:3.3.10
+    [config/images] Pulled k8s.gcr.io/coredns:1.3.1
     ```
 
 ---
@@ -352,18 +381,23 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 * **마스터 노드를 ``초기화``합니다.**
 
     ```
-    [root@nasa-master .ssh]# kubeadm init
-    W0821 07:32:52.197674    2632 configset.go:202] WARNING: kubeadm cannot validate component c
-    onfigs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
-    [init] Using Kubernetes version: v1.18.8
+    [root@nasa-master ~]# kubeadm init
+    I0824 02:22:23.982576   13371 version.go:248] remote version is much newer: v1.18.8; falling back to: stable-1.15
+    [init] Using Kubernetes version: v1.15.12
     [preflight] Running pre-flight checks
-    ....
-    ....(중략)
-    [bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
-    [kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet c
-    lient certificate and key
-    [addons] Applied essential addon: CoreDNS
-    [addons] Applied essential addon: kube-proxy
+            [WARNING Service-Kubelet]: kubelet service is not enabled, please run 'systemctl enable kubelet.service'
+    [preflight] Pulling images required for setting up a Kubernetes cluster
+    [preflight] This might take a minute or two, depending on the speed of your internet connection
+    [preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+    [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+    [kubelet-start] Activating the kubelet service
+    [certs] Using certificateDir folder "/etc/kubernetes/pki"
+    [certs] Generating "ca" certificate and key
+    [certs] Generating "apiserver-kubelet-client" certificate and key
+    ...
+    ...(중략)
+    -----
     Your Kubernetes control-plane has initialized successfully!
     To start using your cluster, you need to run the following as a regular user:
     mkdir -p $HOME/.kube
@@ -373,13 +407,12 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
     https://kubernetes.io/docs/concepts/cluster-administration/addons/
     Then you can join any number of worker nodes by running the following on each as root:
-    kubeadm join 10.146.0.2:6443 --token 7s8bn8.n4gwn9s4tb3cp97e \
-        --discovery-token-ca-cert-hash sha256:d2195b2ce8e842eb0e77993a54855bf10a74c5a24e78e27838
-    91143324f78007 
+    kubeadm join 10.146.0.6:6443 --token ofhrxu.dgsn2pc08glnfj06 \
+        --discovery-token-ca-cert-hash sha256:00f7773eea1e619ea4c5698417679475cb07774b26cd7f738fb82a315f643b5a
     ```
 ---
 
-* **여기서 ``일반 사용자``가 ``kubectl`` 을 ``사용``할 수 있도록 아래 명령을 실행합니다.**
+* **여기서 ``일반 사용자``가 ``kubectl`` 을 ``사용``할 수 있도록 환경변수를 설정합니다.**
 
     ```
     mkdir -p $HOME/.kube
@@ -387,19 +420,44 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
     ```
 
+
+---
+
+### WORKER 노드 설정
+
+*   **``도커 실행``**
+
+    ```
+    systemctl daemon-reload
+    systemctl enable --now docker
+    ```
+
+* **``쿠버네티스 실행``**  
+
+ 
+    ```
+    systemctl enable --now kubelet
+    ```
+
+---
+
 * **로그의 ``마지막 라인의 명령어``는 ``워커 노드``를 해당 ``클러스터에 추가``하는 명령어입니다.**  
 **해당 명령어를 복사해서 ``nasa-node1``, ``nasa-node2``, ``nasa-node3`` 노드에서 수행합니다.**
 
     ```
-    [root@nasa-node1 ~]# kubeadm join 10.146.0.2:6443 --token 7s8bn8.n4gwn9s4tb3cp97e \--discovery-token-ca-cert-hash sha256:d2195b2ce8e842eb0e77993a54855bf10a74c5a24e78e2783891143324f78007
-    W0821 07:42:09.192430    2298 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.
+    [root@nasa-node1 ~]# kubeadm join 10.146.0.6:6443 --token ofhrxu.dgsn2pc08glnfj06 \--discove
+    ry-token-ca-cert-hash sha256:00f7773eea1e619ea4c5698417679475cb07774b26cd7f738fb82a315f643b5
+    a 
     [preflight] Running pre-flight checks
     [preflight] Reading configuration from the cluster...
-    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
-    [kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.18" ConfigMap in the kube-system namespace
+    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubead
+    m-config -oyaml'
+    [kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.15" Con
+    figMap in the kube-system namespace
     [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
-    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
-    [kubelet-start] Starting the kubelet
+    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubead
+    m-flags.env"
+    [kubelet-start] Activating the kubelet service
     [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
     This node has joined the cluster:
     * Certificate signing request was sent to apiserver and a response was received.
@@ -432,3 +490,90 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
     **``CNI``를 설치하면 ``CoreDNS Pod`` 이 ``정상적으로 동작``하게 됩니다.**
 
 * **각 노드와 상태를 확인해보겠습니다**
+
+    ```
+    [root@nasa-master ~]# kubectl get nodes
+    NAME          STATUS   ROLES    AGE     VERSION
+    nasa-master   Ready    master   10m     v1.15.5
+    nasa-node1    Ready    <none>   3m48s   v1.15.5
+    nasa-node2    Ready    <none>   4m15s   v1.15.5
+    nasa-node3    Ready    <none>   3m48s   v1.15.5
+    ```
+
+    ```
+    [root@nasa-master ~]# kubectl get cs
+    NAME                 STATUS    MESSAGE             ERROR
+    controller-manager   Healthy   ok                  
+    scheduler            Healthy   ok                  
+    etcd-0               Healthy   {"health":"true"}   
+    ```
+
+* **최종적으로 구성 API, 및 요소가 정상적으로 실행중인지 확인합니다**
+
+    ```
+    [root@nasa-master ~]# kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by spec.nodeName 
+    -n kube-system
+    POD                                   NODE
+    kube-scheduler-nasa-master            nasa-master
+    weave-net-v7bff                       nasa-master
+    etcd-nasa-master                      nasa-master
+    kube-apiserver-nasa-master            nasa-master
+    kube-controller-manager-nasa-master   nasa-master
+    kube-proxy-6w9dk                      nasa-master
+    kube-proxy-lxn6d                      nasa-node1
+    weave-net-k2tcb                       nasa-node1
+    coredns-5c98db65d4-8cg79              nasa-node1
+    kube-proxy-jqks7                      nasa-node2
+    weave-net-dd6f2                       nasa-node2
+    coredns-5c98db65d4-zbvbn              nasa-node2
+    weave-net-k2jc9                       nasa-node3
+    kube-proxy-kr9sb                      nasa-node3
+    ```
+
+---
+
+### **간단한 pods 배포 TEST**
+
+
+* **간단한 Pod 을 배포해서 동작을 확인해봅시다.**  
+    **아래 pod-test.yaml 파일을 생성.**
+    
+    ```
+    apiVersion: v1
+    kind: Pod
+    metadata:
+    name: myapp-pod
+    labels:
+        app: myapp
+    spec:
+    containers:
+    - name: myapp-container
+        image: busybox
+        command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
+    ```
+    **해당 Pod 이 실행되면 ``busybox`` 라는 경량 리눅스 이미지에  
+    ``Hello Kubernetes!`` 라는 로그가 잠시 동안 출력되고 Pod 은 종료됩니다.**
+
+---
+
+* **PODS 배포**
+
+    ```
+    [root@nasa-master kube]# kubectl apply -f pod-test.yaml
+    pod/nasa-pod created
+    ```
+
+* **동작 및 로그 확인**
+
+    ```
+    [root@nasa-master kube]# kubectl get po
+    NAME       READY   STATUS    RESTARTS   AGE
+    nasa-pod   1/1     Running   0          10s
+    [root@nasa-master kube]# 
+    [root@nasa-master kube]# kubectl logs nasa-pod
+    Hello Kubernetes!
+    ```
+
+    **이로써 기본적인 k8s 클러스터 구성이 완료되었습니다**
+
+----

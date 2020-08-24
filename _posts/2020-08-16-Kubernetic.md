@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Kubernetes] - GCP 기반 k8s환경구성"
+title: "[Kubernetes] - GCP 기반 k8s환경구성[kubespray]"
 author: Lee Wonseok
 categories: Kubernetes
 date: 2020-08-16 09:36
@@ -11,7 +11,7 @@ tags: Kubernetes
 
 
 
-#  KUBERNETES - GCP 기반의 k8S 환경구성
+#  KUBERNETES - GCP 기반의 k8S 환경구성 [kubespray]
 
 **머리말**  
 쿠버네티스 환경을 구성하는 방법은 여러가지가 존재한다.  
