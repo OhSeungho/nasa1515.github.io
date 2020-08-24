@@ -110,6 +110,71 @@ GCP 무료 크레딧이 아까운 마음에 GCP로 진행해보았다.
 
     ![스크린샷, 2020-08-20 14-24-55](https://user-images.githubusercontent.com/69498804/90720126-eded4600-e2f0-11ea-963e-c7d5203642b8.png)
 
+
+---
+
+### **사전 작업하기**
+
+**사전 작업은 master, node1, node2 모두 동일하게 진행합니다.**
+
+* **사전 작업의 모든 과정은 ``root`` 권한으로 진행합니다.**
+
+    ```
+    sudo su -
+    ```
+
+
+* **스왑 메모리 사용 중지**  
+    **``Swap`` 은 디스크의 일부 공간을 메모리처럼 사용하는 기능입니다.**  
+    **``Kubelet`` 이 정상 동작할 수 있도록 swap 디바이스와 파일 모두 ``disable`` 합니다.**
+
+    ```
+    swapoff -a
+    echo 0 > /proc/sys/vm/swappiness
+    sed -e '/swap/ s/^#*/#/' -i /etc/fstab
+    ```
+
+    **``swapoff -a``: paging 과 swap 기능을 끕니다.**  
+    **``/proc/sys/vm/swappiness``: 커널 속성을 변경해 swap을 disable 합니다.**  
+    **``/etc/fastab``: Swap을 하는 파일 시스템을 찾아 disable 합니다.**
+
+---
+
+* **각 노드의 통신을 원활하게 하기 위해 ``방화벽을 해제``합니다.**
+
+    ```
+    systemctl disable firewalld
+    systemctl stop firewalld
+    ```
+
+* **``SELinux(Security-Enhanced Linux)``를 꺼줍니다.  
+**컨테이너가 호스트의 파일시스템에 접속할 수 있도록 해당 기능을 꺼야 합니다.**
+
+    ```
+    setenforce 0
+    sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+    ```
+
+
+* **``RHEL`` 과 ``CentOS 7``에서 ``iptables`` 관련 이슈가 있어 ``커널 매개변수``를 다음과 같이 수정하고 적용합니다.**
+
+    ```
+    cat <<EOF >  /etc/sysctl.d/k8s.conf
+    net.bridge.bridge-nf-call-ip6tables = 1
+    net.bridge.bridge-nf-call-iptables = 1
+    EOF
+    sysctl --system
+    ```
+
+* **``br_netfilter 모듈``을 ``활성화``합니다.**  
+    **``modprobe br_netfilter 명령어``로 해당 모듈을 명시적으로 ``추가``하고  
+    ``lsmod | grep br_netfilter`` 명령어로 추가 여부를 ``확인``할 수 있습니다.**
+
+    ```
+    modprobe br_netfilter
+    ```
+        
+
 ---
 ### **앤서블의 인벤토리는 SSH(RSA) 기반으로 동작하므로 공개키를 공유해줘야 합니다.**
 
@@ -423,8 +488,6 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
 * **디렉토리의 ``tree 구조``를 보기 위해서 tree 패키지를 설치합니다.**
 
     ```
-    [h43254@nasa-master kubespray]$ sudo apt install tree
-    sudo: apt: command not found
     [h43254@nasa-master kubespray]$ 
     [h43254@nasa-master kubespray]$ sudo yum -y install tree
     Loaded plugins: fastestmirror
@@ -450,7 +513,7 @@ Kubespray는 ``Ansible을 기반``으로 Kubernetes를 설치합니다.
 * **``tree``로 ``group_vars 디렉토리``를 보면 설치에 필요한 ``yml 파일``이 있는걸 확인**
 
     ```
-    [h43254@nasa-master kubespray]$ tree inventory/mycluster/group_vars
+    [h43254@nasa-master kubespray]$ tree inventory/cluster/group_vars
     inventory/mycluster/group_vars
     ├── all
     │   ├── all.yml
