@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Kubernetes] - "1.17버전 이상 헬스 체크 에러 리포트"
+title: "[Kubernetes] - 1.17버전 이상 헬스 체크 에러 리포트"
 author: Lee Wonseok
 categories: Kubernetes
 date: 2020-08-17 09:36
@@ -11,7 +11,7 @@ tags: Kubernetes
 
 
 
-# **K8S 1.17버전 이 후 헬스체크 에러 리포트**
+# K8S 1.17버전 이 후 헬스체크 에러 리포트
 
 
 이번 포스트는 이전 K8S 설치 및 구성 포스트에서 정상적으로 설치 뒤에 발견된 이슈에 대한 리포트 입니다.  

@@ -13,7 +13,6 @@ tags: Kubernetes
 
 # **kubespray로 ``ansible-playbook`` 명령어 실행 시  ``"assertion: groups.etcd | length is not divisibleby 2"`` 에러 발생 트러블 슈팅"**
 
----
 
 * **kubespray 설치 후 ``ansible-playbook`` 명령어로 k8s 설치 진행 시  
 ``"assertion: groups.etcd | length is not divisibleby 2"`` 에러가 발생할 수 있습니다.**
