@@ -62,9 +62,7 @@ github, 영문 리포트 사이트에서 여러가지 글이 있지만
 
 * **해당이슈는 아래와 같이 ``GoRang`` 코드 자체에 ``Port가 하드코딩`` 되어 있어   
 ``헬스체크만`` 되지 않을 뿐 실제 Pods, Replicaset등의 ``동작에는 영향이 없습니다.  ``**  
-
-
-    ![스크린샷, 2020-08-24 09-51-58](https://user-images.githubusercontent.com/69498804/90993350-859fac80-e5ef-11ea-9bf9-8d42a5cb7978.png)  
+![스크린샷, 2020-08-24 09-51-58](https://user-images.githubusercontent.com/69498804/90993350-859fac80-e5ef-11ea-9bf9-8d42a5cb7978.png)  
 
     **실제 서비스 포트는 ``10259``이지만 ``헬스체크는 10251,2 포트``로 연결하려고 함**
 
