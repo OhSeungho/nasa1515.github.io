@@ -3,7 +3,7 @@ layout: post
 title: "[Kubernetes] - 1.17버전 이상 헬스 체크 에러 리포트"
 author: Lee Wonseok
 categories: Kubernetes
-date: 2020-08-17 09:36
+date: 2020-08-16 12:36
 comments: true
 cover: "/assets/kubernets.jpg"
 tags: Kubernetes

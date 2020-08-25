@@ -3,7 +3,7 @@ layout: post
 title: "[Kubernetes] - assertion: groups.etcd | length is not divisibleby 2 에러"
 author: Lee Wonseok
 categories: Kubernetes
-date: 2020-08-16 09:36
+date: 2020-08-16 11:36
 comments: true
 cover: "/assets/kubernets.jpg"
 tags: Kubernetes
