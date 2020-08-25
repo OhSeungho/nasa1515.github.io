@@ -11,8 +11,8 @@ tags: Kubernetes
 
 
 
-## kubespray로 ``ansible-playbook`` 명령어 실행 시  
-## ``"assertion: groups.etcd | length is not divisibleby 2"`` 에러 발생"
+## kubespray로 ``ansible-playbook`` 명령어 구동 중  
+### "assertion: groups.etcd | length is not divisibleby 2" 에러 발생"
 
 ---
 
