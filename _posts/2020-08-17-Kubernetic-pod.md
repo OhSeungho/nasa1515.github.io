@@ -17,7 +17,8 @@ tags: Kubernetes
 이전 포스트에서 드디어 GCP 인스턴스 기반의 k8s 클러스터 환경을 구축했다.  
 이번 포스트에서는 이번에 간단하게 포스트해서 정리했지만  
 실제 실습을 들어가기전 전체적인 개념에 대해서 다시 한번 정리하고  
-쿠버네티스의 PODS에 대해서 포스트한다.
+실습에 들어가야 할 것 같다.  
+조대협님의 블로그 글을 참고하여 내 식대로 다시 정리해보았다.  
 
 
 ---
@@ -232,3 +233,51 @@ tags: Kubernetes
 
 ---
 
+* ### **``라벨(label)``**  
+
+    **라벨은 쿠버네티스의 ``리소스를 선택``하는데 사용이 된다.  
+    각 리소스는 라벨을 가질 수 있고  
+    라벨 검색 조건에 따라서 특정 라벨을 가지고 있는 리소스만을 선택할 수 있다.**
+
+이렇게 라벨을 선택하여 특정 리소스만 배포하거나 업데이트할 수 있고 또는 라벨로 선택된 리소스만 Service에 연결하거나 특정 라벨로 선택된 리소스에만 네트워크 접근 권한을 부여하는 등의 행위를 할 수 있다. 
+
+라벨은 metadata 섹션에 키/값 쌍으로 정의가 가능하며, 하나의 리소스에는 하나의 라벨이 아니라 여러 라벨을 동시에 적용할 수 있다.
+
+
+
+"metadata": {
+  "labels": {
+    "key1" : "value1",
+    "key2" : "value2"
+  }
+}
+
+
+
+셀렉터를 사용하는 방법은 오브젝트 스펙에서 selector 라고 정의하고 라벨 조건을 적어 놓으면 된다. 
+
+쿠버네티스에서는 두 가지 셀렉터를 제공하는데, 기본적으로 Equaility based selector와, Set based selector 가 있다.
+
+Equality based selector는 같냐, 다르냐와 같은 조건을 이용하여, 리소스를 선택하는 방법으로
+
+environment = dev
+
+tier != frontend
+
+식으로, 등가 조건에 따라서 리소스를 선택한다.
+
+이보다 향상된 셀렉터는 set based selector로, 집합의 개념을 사용한다.
+
+ environment in (production,qa) 는 environment가 production 또는 qa 인 경우이고, 
+
+ tier notin (frontend,backend)는 environment가 frontend도 아니고 backend도 아닌 리소스를 선택하는 방법이다.
+
+다음 예제는 my-service 라는 이름의 서비스를 정의한것으로 셀렉터에서 app: myapp 정의해서 Pod의 라벨 app이 myapp 것만 골라서 이 서비스에 바인딩해서 9376 포트로 서비스 하는 예제이다.
+
+
+
+출처: https://bcho.tistory.com/1256 [조대협의 블로그]
+
+출처: https://bcho.tistory.com/1256 [조대협의 블로그]
+
+출처: https://bcho.tistory.com/1256 [조대협의 블로그]
